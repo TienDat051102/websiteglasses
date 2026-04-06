@@ -1,0 +1,135 @@
+[
+  {
+    "id": 1,
+    "title": "Trang Chủ",
+    "path": "#home",
+    "is_visible": true,
+    "static": "customer"
+  },
+  {
+    "id": 2,
+    "title": "Sản Phẩm",
+    "path": "#menu",
+    "is_visible": true,
+    "static": "customer"
+  },
+  {
+    "id": 3,
+    "title": "Ưu Đãi",
+    "path": "#specials",
+    "is_visible": true,
+    "static": "customer"
+  },
+  {
+    "id": 4,
+    "title": "Dịch Vụ",
+    "path": "#events",
+    "is_visible": true,
+    "static": "customer"
+  },
+  {
+    "id": 5,
+    "title": "Bộ Sưu Tập",
+    "path": "#gallery",
+    "is_visible": true,
+    "static": "customer"
+  },
+  {
+    "id": 6,
+    "title": "Dashboard",
+    "path": "/admin/dashboard",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 7,
+    "title": "Quản Lý Khuyến Mãi",
+    "path": "/admin/discounts",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 8,
+    "title": "Ưu Đãi Nội Bộ",
+    "path": "/admin/specials",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 9,
+    "title": "Quản Lý Tài Khoản",
+    "path": "/admin/user",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 10,
+    "title": "Bán Hàng",
+    "path": "/admin/order",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 11,
+    "title": "Danh Sách Đơn",
+    "path": "/admin/orderlist",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 12,
+    "title": "Quản Lý Kho",
+    "path": "/admin/ingredients",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 13,
+    "title": "Nhập Hàng",
+    "path": "/admin/addingredients",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 14,
+    "title": "Danh Mục Sản Phẩm",
+    "path": "/admin/menu-categories",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 15,
+    "title": "Quản Lý Sản Phẩm",
+    "path": "/admin/menu",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 16,
+    "title": "Quản Lý Lịch Hẹn",
+    "path": "/admin/reservations",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 17,
+    "title": "Quản Lý Chi Nhánh",
+    "path": "/admin/tables",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 18,
+    "title": "Quản Lý Khách Hàng",
+    "path": "/admin/customer",
+    "is_visible": true,
+    "static": "admin"
+  },
+  {
+    "id": 19,
+    "title": "Quản Lý Menu",
+    "path": "/admin/navmenu",
+    "is_visible": true,
+    "static": "admin"
+  }
+]

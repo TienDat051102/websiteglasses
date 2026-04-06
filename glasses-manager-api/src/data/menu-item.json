@@ -1,0 +1,128 @@
+[
+  {
+    "id": 1,
+    "name": "Gọng Kính Kim Loại Classic",
+    "description": "Gọng kính kim loại mỏng, nhẹ, phù hợp đeo hàng ngày và môi trường công sở.",
+    "image": "gong_kim_loai.jpg",
+    "price": 450000,
+    "status": true,
+    "category_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Gọng Kính Nhựa TR90",
+    "description": "Gọng kính nhựa dẻo TR90 siêu nhẹ, chống va đập tốt.",
+    "image": "gong_tr90.jpg",
+    "price": 350000,
+    "status": true,
+    "category_id": 1
+  },
+  {
+    "id": 3,
+    "name": "Kính Mát Thời Trang",
+    "description": "Kính mát chống tia UV400, thiết kế thời trang, phù hợp đi nắng.",
+    "image": "kinh_mat.jpg",
+    "price": 550000,
+    "status": true,
+    "category_id": 2
+  },
+  {
+    "id": 4,
+    "name": "Kính Chống Ánh Sáng Xanh",
+    "description": "Kính bảo vệ mắt khi dùng máy tính, giảm mỏi mắt và chống ánh sáng xanh.",
+    "image": "blue_light.jpg",
+    "price": 400000,
+    "status": true,
+    "category_id": 3
+  },
+  {
+    "id": 5,
+    "name": "Tròng Kính Cận 1.56",
+    "description": "Tròng kính cận tiêu chuẩn, phù hợp độ cận nhẹ.",
+    "image": "trong_156.jpg",
+    "price": 200000,
+    "status": true,
+    "category_id": 4
+  },
+  {
+    "id": 6,
+    "name": "Tròng Kính Mỏng 1.67",
+    "description": "Tròng kính siêu mỏng, phù hợp người có độ cận cao.",
+    "image": "trong_167.jpg",
+    "price": 600000,
+    "status": true,
+    "category_id": 4
+  },
+  {
+    "id": 7,
+    "name": "Kính Đổi Màu",
+    "description": "Kính tự động đổi màu khi ra nắng, tiện lợi cho người di chuyển nhiều.",
+    "image": "doi_mau.jpg",
+    "price": 900000,
+    "status": true,
+    "category_id": 3
+  },
+  {
+    "id": 8,
+    "name": "Kính Râm Polarized",
+    "description": "Kính phân cực chống chói, phù hợp lái xe và đi biển.",
+    "image": "polarized.jpg",
+    "price": 750000,
+    "status": true,
+    "category_id": 2
+  },
+  {
+    "id": 9,
+    "name": "Gọng Kính Thời Trang Nữ",
+    "description": "Thiết kế nữ tính, phù hợp nhiều khuôn mặt.",
+    "image": "gong_nu.jpg",
+    "price": 500000,
+    "status": true,
+    "category_id": 1
+  },
+  {
+    "id": 10,
+    "name": "Gọng Kính Nam Cao Cấp",
+    "description": "Phong cách mạnh mẽ, phù hợp doanh nhân và dân văn phòng.",
+    "image": "gong_nam.jpg",
+    "price": 800000,
+    "status": true,
+    "category_id": 1
+  },
+  {
+    "id": 11,
+    "name": "Combo Gọng + Tròng Cận",
+    "description": "Combo tiết kiệm gồm gọng kính và tròng cơ bản.",
+    "image": "combo.jpg",
+    "price": 650000,
+    "status": true,
+    "category_id": 5
+  },
+  {
+    "id": 12,
+    "name": "Dung Dịch Vệ Sinh Kính",
+    "description": "Dung dịch làm sạch kính, chống bám bụi và dấu vân tay.",
+    "image": "cleaner.jpg",
+    "price": 50000,
+    "status": true,
+    "category_id": 6
+  },
+  {
+    "id": 13,
+    "name": "Khăn Lau Kính Microfiber",
+    "description": "Khăn lau mềm, không làm xước tròng kính.",
+    "image": "cloth.jpg",
+    "price": 20000,
+    "status": true,
+    "category_id": 6
+  },
+  {
+    "id": 14,
+    "name": "Hộp Đựng Kính",
+    "description": "Hộp bảo vệ kính chắc chắn, chống va đập.",
+    "image": "case.jpg",
+    "price": 70000,
+    "status": true,
+    "category_id": 6
+  }
+]
