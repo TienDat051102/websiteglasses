@@ -1,8 +1,7 @@
+export * from './appointments.repository';
 export * from './customers.repository';
 export * from './discounts.repository';
 export * from './information.repository';
-export * from './ingredients.repository';
-export * from './inventory-transactions.repository';
 export * from './menu-categories.repository';
 export * from './menu-items.repository';
 export * from './nav-menu-items.repository';
@@ -11,6 +10,6 @@ export * from './order-items.repository';
 export * from './order-statuses.repository';
 export * from './orders.repository';
 export * from './payments.repository';
-export * from './reservations.repository';
-export * from './tables.repository';
+export * from './productInventory.repository';
 export * from './users.repository';
+

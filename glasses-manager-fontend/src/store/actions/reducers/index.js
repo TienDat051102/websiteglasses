@@ -11,6 +11,7 @@ import paymentsReducer from './payments.reducer';
 import reportReducer from './report.reducer';
 import ingredientsReducer from './ingredients.reducer';
 import navmenuReducer from './navmenu.reducer';
+import informationReducer  from './information.reducer';
 
 
 
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
     reportReducer: reportReducer,
     ingredientsReducer: ingredientsReducer,
     navmenuReducer: navmenuReducer,
+    informationReducer: informationReducer,
 });
 
 

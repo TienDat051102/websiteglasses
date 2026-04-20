@@ -12,11 +12,10 @@ export class MenuCategoriesController {
     private menucategoriesrepo: MenucategoriesRepository,
     @repository(MenuItemsRepository)
     private menuitemrepo: MenuItemsRepository,
-  ) {}
+  ) { }
 
   @get('/menucategories/listmenucategories')
   async listmenucategories(
-    // @inject(RestBindings.Http.REQUEST) request: ClientRequest,
     @param.query.number('id') id: number,
   ): Promise<any> {
     const filter: any = {
@@ -35,8 +34,8 @@ export class MenuCategoriesController {
       };
     }
     try {
-      let data = await this.menucategoriesrepo.find(filter);
-      let datacount = await this.menucategoriesrepo.count(filter.where);
+      const data = await this.menucategoriesrepo.find(filter);
+      const datacount = await this.menucategoriesrepo.count(filter.where);
       return {
         message: `Xuất dữ liệu thành công`,
         data: data,
@@ -65,7 +64,7 @@ export class MenuCategoriesController {
     @param.query.number('limit') limit: number,
     @param.query.string('search') search: string,
   ): Promise<any> {
-    let searchWord = (search || '').toLowerCase();
+    const searchWord = (search || '').toLowerCase();
     const filter: any = {
       skip: skip >= 0 ? skip : undefined,
       limit: limit >= 0 ? limit : undefined,
@@ -77,12 +76,41 @@ export class MenuCategoriesController {
       where: {name: {ilike: `%${searchWord}%`}},
     };
     try {
-      let data = await this.menucategoriesrepo.find(filter);
-      let datacount = await this.menucategoriesrepo.count(filter.where);
+      const data = await this.menucategoriesrepo.find(filter);
+      const datacount = await this.menucategoriesrepo.count(filter.where);
       return {
         message: `Xuất dữ liệu thành công`,
         data: data,
         datacount: datacount,
+      };
+    } catch (e) {
+      return {message: `Internal server Error Occurred, Please try again`, e};
+    }
+  }
+
+  @get('/menucategories/getMenuCategoriesCustomer')
+  // @authenticate('jwt')
+  @response(200, {
+    description: 'Protected resource',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'string',
+        },
+      },
+    },
+  })
+  async getMenuCategoriesCustomer(
+  ): Promise<any> {
+    try {
+      const data = await this.menucategoriesrepo.find({
+        where: {
+          status: true,
+        }
+      });
+      return {
+        message: `Xuất dữ liệu thành công`,
+        data: data,
       };
     } catch (e) {
       return {message: `Internal server Error Occurred, Please try again`, e};
@@ -105,16 +133,18 @@ export class MenuCategoriesController {
     // @inject(RestBindings.Http.REQUEST) request: ClientRequest,
     @requestBody() body: any = {},
   ): Promise<any> {
-    const {name} = body;
+    const {name, icon, status} = body;
     try {
-      let payload = {
+      const payload = {
         name: name,
+        icon: icon,
+        status: status,
       };
-      let ktdata = await this.menucategoriesrepo.findOne({where: {name: name}});
+      const ktdata = await this.menucategoriesrepo.findOne({where: {name: name}});
       if (!ktdata) {
         return {message: 'Danh mục món ăn đã tồn tại'};
       }
-      let data = await this.menucategoriesrepo.create(payload);
+      const data = await this.menucategoriesrepo.create(payload);
       return {message: 'Thêm danh mục món ăn thành công', data: data};
     } catch (e) {
       return {message: `Internal server Error Occurred, Please try again`, e};
@@ -137,28 +167,32 @@ export class MenuCategoriesController {
     // @inject(RestBindings.Http.REQUEST) request: ClientRequest,
     @requestBody() body: any = {},
   ): Promise<any> {
-    const {id, name} = body;
+    const {id, name, icon, status} = body;
     try {
       if (!id) {
-        let ktdata = await this.menucategoriesrepo.find({where: {name: name}});
+        const ktdata = await this.menucategoriesrepo.find({where: {name: name}});
         if (!ktdata) {
           return {message: 'Tên danh mục món ăn đã tồn tại'};
         } else {
-          let payload = {
+          const payload = {
             name: name,
+            icon: icon,
+            status: status,
           };
-          let data = await this.menucategoriesrepo.create(payload);
+          await this.menucategoriesrepo.create(payload);
           return {message: 'Success'};
         }
       } else {
-        let ktdata = await this.menucategoriesrepo.find({where: {name: name}});
+        const ktdata = await this.menucategoriesrepo.findById(id);
         if (!ktdata) {
-          return {message: 'Tên danh mục món ăn đã tồn tại'};
+          return {message: 'Danh mục món ăn bạn chọn không tồn tại'};
         }
-        let payload = {
+        const payload = {
           name: name,
+          icon: icon,
+          status: status,
         };
-        let data = await this.menucategoriesrepo.updateById(id, payload);
+        await this.menucategoriesrepo.updateById(id, payload);
         return {message: 'Success'};
       }
     } catch (e) {
@@ -184,7 +218,7 @@ export class MenuCategoriesController {
   ): Promise<any> {
     const {id} = body;
     try {
-      let ktdata = await this.menucategoriesrepo.findById(id);
+      const ktdata = await this.menucategoriesrepo.findById(id);
       if (!ktdata) {
         return {message: 'Danh mục món ăn bạn chọn không tồn tại'};
       }

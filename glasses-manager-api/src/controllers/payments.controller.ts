@@ -9,7 +9,6 @@ import {
   OrdersRepository,
   OrderstatusesRepository,
   PaymentsRepository,
-  TablesRepository,
 } from '../repositories';
 
 export class PaymentsController {
@@ -20,13 +19,11 @@ export class PaymentsController {
     private orderItemRepo: OrderitemsRepository,
     @repository(OrderstatusesRepository)
     private orderStatusRepo: OrderstatusesRepository,
-    @repository(TablesRepository)
-    private tableRepo: TablesRepository,
     @repository(PaymentsRepository)
     private paymentsRepo: PaymentsRepository,
     @repository(MenuItemsRepository)
     private menuItemsRepo: MenuItemsRepository,
-  ) {}
+  ) { }
   @post('/payments/createpayments')
   @authenticate('jwt')
   @response(200, {

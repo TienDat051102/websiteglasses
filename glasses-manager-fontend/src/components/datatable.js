@@ -54,7 +54,11 @@ class DataTable extends Component {
               {paginatedData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {columns.map((col, colIndex) => (
-                    <td key={colIndex}>{row[col.accessor]}</td>
+                   <td key={colIndex}>
+                    {col.render
+                      ? col.render(row[col.accessor], row)
+                      : row[col.accessor]}
+                  </td>
                   ))}
                   <td>
                     <Button

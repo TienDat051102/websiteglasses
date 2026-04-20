@@ -15,12 +15,12 @@ export class OrderItems extends Entity {
   orderId?: number;
 
   @property({
-    type: 'object', // Lưu thêm các thông tin như số lượng, giá món ăn trong JSONB
+    type: 'object',
     postgresql: {
       dataType: 'jsonb',
     },
   })
-  menu_items: object; // JSONB lưu trữ thông tin món ăn, số lượng, giá
+  menu_items: object;
 
   @property({
     type: 'date',
@@ -33,6 +33,6 @@ export class OrderItems extends Entity {
   }
 }
 
-export interface OrderitemsRelations {}
+export interface OrderitemsRelations { }
 
 export type OrderItemsWithRelations = OrderItems & OrderitemsRelations;

@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import Information from '../models/information'; // Đảm bảo rằng bạn đã có model gọi API
+import React, { createContext, useState, useEffect, useContext } from "react";
+import Information from "../models/Information"; // Đảm bảo rằng bạn đã có model gọi API
 
 // Tạo context
 const InformationContext = createContext();

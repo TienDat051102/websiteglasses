@@ -26,13 +26,13 @@ function navmenuReducer(state = INITIAL_STATE, action) {
     case Types.DELETE_NAVMENU_TYPE_SUCCESS:
       return {
         ...state,
-        message: action.data,
+        navmenu: action.data,
       };
 
     case Types.UPDATE_NAVMENU_TYPE_SUCCESS:
       return {
         ...state,
-        message: action.data,
+        navmenu: action.data,
       };
 
     default:

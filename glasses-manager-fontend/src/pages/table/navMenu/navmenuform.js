@@ -23,8 +23,15 @@ class NavMenuForm extends Component {
   };
 
   handleSave = async () => {
-    await this.props.UPDATE_NAVMENU(this.state);
-    this.props.onClose();
+   let payload = { ...this.state };
+  if (!payload.id) {
+    delete payload.id; 
+  } else {
+    payload.id = Number(payload.id);
+  }
+  await this.props.UPDATE_NAVMENU(payload);
+  alert(this.props.data ? "Sửa thành công!" : "Thêm thành công!");
+  this.props.onClose();
   };
 
   render() {

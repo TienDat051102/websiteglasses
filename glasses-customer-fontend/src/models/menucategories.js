@@ -1,16 +1,16 @@
 import Api from './Axios';
 
 class MenuCategories{
-    static async getmenucateandmenuitems(id){
+    static async getMenuCategoriesCustomer(){
         try{
-            const URL = '/menucategories/listmenucategories';
-            const {data} = await Api.get(URL, {id: id})
+            const URL = '/menucategories/getMenuCategoriesCustomer';
+            const {data} = await Api.get(URL)
             return data.data;
         }
         catch(e){
             console.error('Lỗi khi lấy danh sách:', e);
             throw e; 
-        }
+        }   
     }
 }
 

@@ -95,6 +95,7 @@ export class NavMenuController {
         await this.navmenurepo.updateById(body.id, body);
         return {message: 'Update Success'};
       } else {
+        console.log('body', body);
         await this.navmenurepo.create(body);
         return {message: 'Create Success'};
       }

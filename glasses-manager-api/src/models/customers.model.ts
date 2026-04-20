@@ -1,6 +1,6 @@
 import {Entity, hasMany, model, property} from '@loopback/repository';
+import {Appointments} from './appointments.model';
 import {Orders} from './orders.model';
-import {Reservations} from './reservations.model';
 
 @model()
 export class Customers extends Entity {
@@ -30,19 +30,19 @@ export class Customers extends Entity {
     type: 'date',
     default: () => new Date(),
   })
-  created_at?: String;
+  created_at?: Date;
 
-  @hasMany(() => Orders, {keyTo: 'customer_id'})
+  @hasMany(() => Orders, {keyTo: 'customerId'})
   orders: Orders[];
 
-  @hasMany(() => Reservations, {keyTo: 'customer_id'})
-  reservations: Reservations[];
+  @hasMany(() => Appointments, {keyTo: 'customerId'})
+  appointments: Appointments[];
 
   constructor(data?: Partial<Customers>) {
     super(data);
   }
 }
 
-export interface CustomersRelations {}
+export interface CustomersRelations { }
 
 export type CustomersWithRelations = Customers & CustomersRelations;

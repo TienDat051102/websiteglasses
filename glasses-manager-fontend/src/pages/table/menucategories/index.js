@@ -23,8 +23,29 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 const columns = [
-  { header: "Tên Món", accessor: "name" },
-  { header: "Những Món Ăn Trong Danh Mục", accessor: "menuitems" },
+  { header: "Tên Danh Mục", accessor: "name" },
+  { header: "Những Sản Phẩm thuộc Danh Mục", accessor: "menuitems" },
+  {
+    header: "Biểu tượng",
+    accessor: "icon",
+    render: (value) => (
+      <img
+        src={value}
+        alt=""
+        style={{ width: 50, height: 50, objectFit: "cover" }}
+      />
+    ),
+  },
+  {
+    header: "Trạng Thái",
+    accessor: "status",
+    render: (value) => (
+      <span style={{ color: value ? "green" : "red" }}>
+        {value ? "Hoạt động" : "Không hoạt động"}
+      </span>
+    ),
+  },
+
 ];
 
 class MenuCategories extends Component {
@@ -156,7 +177,7 @@ class MenuCategories extends Component {
         <Modal show={showForm} onHide={this.handleCloseForm}>
           <Modal.Header>
             <Modal.Title>
-              {formType === "create" ? "Create Discount" : "Edit Discount"}
+              {formType === "create" ? "Tạo Danh Mục" : "Chỉnh Sửa Danh Mục"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>

@@ -21,8 +21,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const columns = [
   { header: "Tiêu đề", accessor: "title" },
-  { header: "Đường dẫn", accessor: "path" },
-  { header: "Loại", accessor: "static" },
+  { header: "Màn Hình Hiển Thị", accessor: "static" },
   { header: "Hiển thị", accessor: "is_visible" },
 ];
 
@@ -102,13 +101,13 @@ handlePageClick = async(selectedPage)=>{
       <>
          <main id="main" className="main">
           <div className="pagetitle">
-            <h1>Quản Lý Menu</h1>
+            <h1>Quản Lý Thanh Công Cụ</h1>
             <nav>
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
                   <a href="index.html">Trang chủ</a>
                 </li>
-                <li className="breadcrumb-item active">Quản Lý Menu</li>
+                <li className="breadcrumb-item active">Quản Lý Thanh Công Cụ</li>
               </ol>
             </nav>
           </div>

@@ -7,14 +7,13 @@ import {
   MenucategoriesRepository,
   MenuItemsRepository,
   NavMenuRepository,
-  UsersRepository
+  UsersRepository,
 } from './repositories';
 
 export const APP_MODELS = [
   'Customers',
   'Users',
-  'Tables',
-  'Reservations',
+  'Appointments',
   'Information',
   'Orders',
   'OrderStatuses',
@@ -23,8 +22,7 @@ export const APP_MODELS = [
   'NavMenuItems',
   'MenuItems',
   'MenuCategories',
-  'InventoryTransactions',
-  'Ingredients',
+  'ProductInventory',
   'Payments',
   'Discounts',
 ];
@@ -35,14 +33,17 @@ export async function migrate(app: any, args: string[]) {
 
   await app.boot();
   await app.migrateSchema({existingSchema, models: APP_MODELS});
+
   try {
     await createUserData(app);
     await createData(app);
   } catch (e) {
-    console.log('lỗi', e);
+    console.log('Lỗi seed:', e);
   }
+
   process.exit(0);
 }
+
 async function createUserData(app: any) {
   const userRepo = await app.getRepository(UsersRepository);
 
@@ -64,133 +65,88 @@ async function createUserData(app: any) {
       user.password = hashedPassword;
       await userRepo.create(user);
     }
-    console.log('Dữ liệu người dùng đã được tạo và mật khẩu đã được mã hóa.');
+
+    console.log('✅ Tạo user thành công');
   } else {
-    console.log('Người dùng đã tồn tại, không cần tạo thêm.');
+    console.log('⚠️ User đã tồn tại');
   }
 }
 
 async function createData(app: any) {
-  // đửa dữ liệu từ file vào db
   const informationRepo = await app.getRepository(InformationRepository);
   const informationdata = JSON.parse(
-    readFileSync(join(__dirname, '../src/data/information.json'), 'utf-8'), // Đọc file seed.json
+    readFileSync(join(__dirname, '../src/data/information.json'), 'utf-8'),
   );
-  // thêm bản ghi
-  for (const record of informationdata) {
-    const ktdata = await informationRepo.findOne({
-      where: {id: record.id},
-    });
 
-    if (!ktdata) {
-      const {id, ...dataToCreate} = record; // Tách id ra khỏi record
-      await informationRepo.create(dataToCreate); // Gọi create với data không có id
-    } else {
-      console.log(`Bản ghi với ID ${record.id} đã tồn tại.`);
+  for (const record of informationdata) {
+    const exists = await informationRepo.findOne({where: {id: record.id}});
+    if (!exists) {
+      const {id, ...data} = record;
+      await informationRepo.create(data);
     }
   }
-  console.log('Thêm dữ liệu thành công.');
+  console.log('✅ Information OK');
 
   const navmenuRepo = await app.getRepository(NavMenuRepository);
   const navmenudata = JSON.parse(
     readFileSync(join(__dirname, '../src/data/nav-menu.json'), 'utf-8'),
   );
-  for (const record of navmenudata) {
-    const ktdata = await navmenuRepo.findOne({
-      where: {id: record.id},
-    });
 
-    if (!ktdata) {
-      const {id, ...dataToCreate} = record;
-      await navmenuRepo.create(dataToCreate);
-    } else {
-      console.log(`Bản ghi với ID ${record.id} đã tồn tại.`);
+  for (const record of navmenudata) {
+    const exists = await navmenuRepo.findOne({where: {id: record.id}});
+    if (!exists) {
+      const {id, ...data} = record;
+      await navmenuRepo.create(data);
     }
   }
-  console.log('Thêm dữ liệu thành công.');
+  console.log('✅ NavMenu OK');
+
+  const categoryRepo = await app.getRepository(MenucategoriesRepository);
+  const categoryData = JSON.parse(
+    readFileSync(join(__dirname, '../src/data/menu-categories.json'), 'utf-8'),
+  );
+
+  for (const record of categoryData) {
+    const exists = await categoryRepo.findOne({where: {id: record.id}});
+    if (!exists) {
+      const {id, ...data} = record;
+      await categoryRepo.create(data);
+    }
+  }
+  console.log('✅ Categories OK');
 
   const menuitemRepo = await app.getRepository(MenuItemsRepository);
   const menuitemdata = JSON.parse(
     readFileSync(join(__dirname, '../src/data/menu-item.json'), 'utf-8'),
   );
+
   for (const record of menuitemdata) {
-    const ktdata = await menuitemRepo.findOne({
-      where: {id: record.id},
-    });
-    if (!ktdata) {
-      const {id, ...dataToCreate} = record;
-      await menuitemRepo.create(dataToCreate);
-    } else {
-      console.log(`Bản ghi với ID ${record.id} đã tồn tại.`);
+    const exists = await menuitemRepo.findOne({where: {id: record.id}});
+    if (!exists) {
+      const {id, ...data} = record;
+
+      const payload = {
+        ...data,
+        stock: data.stock || 0,
+        import_price: data.import_price || 0,
+      };
+
+      await menuitemRepo.create(payload);
     }
   }
-  console.log('Thêm dữ liệu sản phẩm thành công .');
-
-  // const ingredientsRepo = await app.getRepository(IngredientsRepository);
-  // const ingredientsdata = JSON.parse(
-  //   readFileSync(join(__dirname, '../src/data/ingredients.json'), 'utf-8'),
-  // );
-  // for (const record of ingredientsdata) {
-  //   const ktdata = await ingredientsRepo.findOne({
-  //     where: {id: record.id},
-  //   });
-  //   if (!ktdata) {
-  //     const {id, ...dataToCreate} = record;
-  //     await ingredientsRepo.create(dataToCreate);
-  //   } else {
-  //     console.log(`Bản ghi với ID ${record.id} đã tồn tại.`);
-  //   }
-  // }
-  // console.log('Thêm dữ liệu nguyên liệu thành công.');
-
-  const menucategoriesRepo = await app.getRepository(MenucategoriesRepository);
-  const menucategoriesdata = JSON.parse(
-    readFileSync(join(__dirname, '../src/data/menu-categories.json'), 'utf-8'),
-  );
-  for (const record of menucategoriesdata) {
-    const ktdata = await menucategoriesRepo.findOne({
-      where: {id: record.id},
-    });
-    if (!ktdata) {
-      const {id, ...dataToCreate} = record;
-      await menucategoriesRepo.create(dataToCreate);
-    } else {
-      console.log(`Bản ghi với ID ${record.id} đã tồn tại.`);
-    }
-  }
-  console.log('Thêm dữ liệu danh mục món ăn thành công.');
-
-  // const tablesRepo = await app.getRepository(TablesRepository);
-  // const tablesRepodata = JSON.parse(
-  //   readFileSync(join(__dirname, '../src/data/table.json'), 'utf-8'),
-  // );
-  // for (const record of tablesRepodata) {
-  //   const ktdata = await tablesRepo.findOne({
-  //     where: {id: record.id},
-  //   });
-  //   if (!ktdata) {
-  //     const {id, ...dataToCreate} = record;
-  //     await tablesRepo.create(dataToCreate);
-  //   } else {
-  //     console.log(`Bản ghi với ID ${record.id} đã tồn tại.`);
-  //   }
-  // }
-  // console.log('Thêm dữ liệu bàn thành công.');
+  console.log('✅ MenuItems OK');
 
   const discountsRepo = await app.getRepository(DiscountsRepository);
-  const discountsRepodata = JSON.parse(
-    readFileSync(join(__dirname, '../src/data/discouns.json'), 'utf-8'),
+  const discountsData = JSON.parse(
+    readFileSync(join(__dirname, '../src/data/discounts.json'), 'utf-8'), // ✅ FIX tên file
   );
-  for (const record of discountsRepodata) {
-    const ktdata = await discountsRepo.findOne({
-      where: {id: record.id},
-    });
-    if (!ktdata) {
-      const {id, ...dataToCreate} = record;
-      await discountsRepo.create(dataToCreate);
-    } else {
-      console.log(`Bản ghi với ID ${record.id} đã tồn tại.`);
+
+  for (const record of discountsData) {
+    const exists = await discountsRepo.findOne({where: {id: record.id}});
+    if (!exists) {
+      const {id, ...data} = record;
+      await discountsRepo.create(data);
     }
   }
-  console.log('Thêm dữ liệu giảm giá thành công.');
+  console.log('✅ Discounts OK');
 }

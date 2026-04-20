@@ -1,8 +1,7 @@
+export * from './appointments.model';
 export * from './customers.model';
 export * from './discounts.model';
 export * from './information.model';
-export * from './ingredients.model';
-export * from './inventory-transactions.model';
 export * from './menu-categories.model';
 export * from './menu-items.model';
 export * from './nav-menu-items.model';
@@ -11,6 +10,6 @@ export * from './order-items.model';
 export * from './order-statuses.model';
 export * from './orders.model';
 export * from './payments.model';
-export * from './reservations.model';
-export * from './tables.model';
+export * from './productInventory.model';
 export * from './users.model';
+

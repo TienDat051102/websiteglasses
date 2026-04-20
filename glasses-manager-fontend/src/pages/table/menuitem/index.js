@@ -53,8 +53,10 @@ class MenuItems extends Component {
   };
 
   handleCloseForm = () => {
-    this.setState({ showForm: false });
-    this.initData();
+    this.setState({ showForm: false, selectedMenuItem: null });
+    setTimeout(() => {
+      this.initData();
+    }, 200);
   };
 
   initData = async () => {
@@ -124,62 +126,71 @@ class MenuItems extends Component {
                       <table className="table table-bordered">
                         <thead>
                           <tr>
-                            <th>Tên Sản Phẩm</th>
-                            <th>Mô Tả</th>
-                            <th>Ảnh</th>
-                            <th>Giá</th>
-                            <th>Trạng Thái</th>
-                            <th>Actions</th>
-                          </tr>
+  <th>Tên Sản Phẩm</th>
+  <th>Ảnh</th>
+  <th>Giá</th>
+  <th>Tồn Kho</th>
+  <th>Thương Hiệu</th>
+  <th>Loại</th>
+  <th>Trạng Thái</th>
+  <th>Actions</th>
+</tr>
                         </thead>
 
                         <tbody>
                           {Array.isArray(menuItems) && menuItems.length > 0 ? (
                             menuItems.map((item) => (
                               <tr key={item.id}>
-                                <td>{item.name}</td>
-                                <td>{item.description}</td>
+  <td>{item.name}</td>
 
-                                <td>
-                                  {item.image ? (
-                                    <img
-                                      src={item.image}
-                                      alt={item.name}
-                                      width="50"
-                                      height="50"
-                                      className="img-thumbnail"
-                                    />
-                                  ) : (
-                                    <span>Chưa có ảnh</span>
-                                  )}
-                                </td>
+  <td>
+    {item.image ? (
+      <img
+        src={item.image}
+        alt={item.name}
+        width="50"
+        height="50"
+        className="img-thumbnail"
+      />
+    ) : (
+      <span>Chưa có ảnh</span>
+    )}
+  </td>
 
-                                <td>{item.price?.toLocaleString()} VND</td>
+  <td>{item.price?.toLocaleString()} VND</td>
 
-                                <td>
-                                  {item.status ? "Đang Bán" : "Ngừng Bán"}
-                                </td>
+  <td>
+    <span className={item.stock <= 5 ? "text-danger" : ""}>
+      {item.stock}
+    </span>
+  </td>
 
-                                <td>
-                                  <Button
-                                    variant="warning"
-                                    onClick={() =>
-                                      this.handleActionClick("edit", item)
-                                    }
-                                  >
-                                    <FaEdit />
-                                  </Button>
+  <td>{item.brand || "—"}</td>
 
-                                  <Button
-                                    variant="danger"
-                                    onClick={() =>
-                                      this.handleActionClick("delete", item)
-                                    }
-                                  >
-                                    <FaTrash />
-                                  </Button>
-                                </td>
-                              </tr>
+  <td>{item.type || "—"}</td>
+
+  <td>
+    <span className={item.status ? "text-success" : "text-danger"}>
+      {item.status ? "Đang Bán" : "Ngừng Bán"}
+    </span>
+  </td>
+
+            <td>
+              <Button
+                variant="warning"
+                onClick={() => this.handleActionClick("edit", item)}
+              >
+                <FaEdit />
+              </Button>
+
+              <Button
+                variant="danger"
+                onClick={() => this.handleActionClick("delete", item)}
+              >
+                <FaTrash />
+              </Button>
+            </td>
+          </tr>
                             ))
                           ) : (
                             <tr>
@@ -223,7 +234,7 @@ class MenuItems extends Component {
             <Modal.Title>
               {formType === "create"
                 ? "Thêm Sản Phẩm"
-                : "Chỉnh Sửa Sản Phẩm"}
+                : "Cập Nhật Sản Phẩm"}
             </Modal.Title>
           </Modal.Header>
 

@@ -1,14 +1,12 @@
 import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {get, param, post, requestBody, response} from '@loopback/rest';
+import {get, param, post, requestBody} from '@loopback/rest';
 import {
-  IngredientsRepository,
   MenuItemsRepository,
   OrderitemsRepository,
   OrdersRepository,
   OrderstatusesRepository,
-  TablesRepository,
 } from '../repositories';
 import {JWTService} from '../services/jwt.service';
 
@@ -20,288 +18,140 @@ export class OrdersController {
     private orderItemRepo: OrderitemsRepository,
     @repository(OrderstatusesRepository)
     private orderStatusRepo: OrderstatusesRepository,
-    @repository(TablesRepository)
-    private tableRepo: TablesRepository,
-    @repository(IngredientsRepository)
-    private ingredientsRepo: IngredientsRepository,
     @repository(MenuItemsRepository)
     private menuItemsRepo: MenuItemsRepository,
-  ) {}
+  ) { }
+
   @post('/order/createorders')
   @authenticate('jwt')
-  @response(200, {
-    description: 'Protected resource',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'string',
-        },
-      },
-    },
-  })
   async createorders(@requestBody() body: any = {}): Promise<any> {
-    const {ordersItem, table, customerId} = body;
-    if (!ordersItem) {
-      return {error: 'Không thể để trống!'};
+    const {ordersItem, customerId} = body;
+
+    if (!ordersItem || !Array.isArray(ordersItem)) {
+      return {error: 'Danh sách sản phẩm không hợp lệ'};
     }
+
     try {
-      console.log('body', body);
-      let tableId = isNaN(table) || !table ? null : table;
-      if (tableId !== null) {
-        await this.tableRepo.updateById(tableId, {
-          is_available: false,
-        });
-      }
-      let orders = await this.orderRepo.create({
-        tableId: tableId,
+      const order = await this.orderRepo.create({
         customerId: customerId,
       });
-      let ordersItems = await this.orderItemRepo.create({
-        orderId: orders.id,
+
+      for (const item of ordersItem) {
+        const product = await this.menuItemsRepo.findById(item.id);
+
+        if (!product) {
+          throw new Error(`Không tìm thấy sản phẩm ID ${item.id}`);
+        }
+
+        if (product.stock < item.quantity) {
+          throw new Error(`Sản phẩm ${product.name} không đủ hàng`);
+        }
+
+        product.stock -= item.quantity;
+        await this.menuItemsRepo.updateById(product.id, product);
+      }
+
+      await this.orderItemRepo.create({
+        orderId: order.id,
         menu_items: ordersItem,
       });
-      let ordersStatus = await this.orderStatusRepo.create({
-        orderId: orders.id,
+
+      await this.orderStatusRepo.create({
+        orderId: order.id,
         status: 'pending',
       });
-      return {message: `Đơn hàng đã được đặt`};
-    } catch (e) {
-      return {error: e};
+
+      return {message: 'Đặt hàng thành công'};
+    } catch (e: any) {
+      return {error: e.message};
     }
   }
+
   @post('/order/updateorders')
   @authenticate('jwt')
-  @response(200, {
-    description: 'Protected resource',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'string',
-        },
-      },
-    },
-  })
   async updateorders(@requestBody() body: any = {}): Promise<any> {
     const {ordersItem, orderId} = body;
-    if (!ordersItem) {
-      return {error: 'Không thể để trống!'};
+
+    if (!ordersItem || !orderId) {
+      return {error: 'Thiếu dữ liệu'};
     }
-    console.log('body', body);
+
     try {
-      if (!orderId) {
-        return {error: 'Không thể để trống!'};
-      }
       await this.orderItemRepo.create({
         orderId: orderId,
         menu_items: ordersItem,
       });
-      return {message: `Success`};
-    } catch (e) {
-      return {error: e};
+
+      return {message: 'Cập nhật thành công'};
+    } catch (e: any) {
+      return {error: e.message};
     }
   }
 
   @get('/order/listorders')
-  @response(200, {
-    description: 'Protected resource',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'string',
-        },
-      },
-    },
-  })
   async listorders(): Promise<any> {
     try {
       const filter: any = {
         include: [
-          {
-            relation: 'orderItems',
-          },
+          {relation: 'orderItems'},
           {
             relation: 'orderStatuses',
             scope: {
-              where: {
-                status: {neq: 'complete'},
-              },
               order: ['updated_at DESC'],
             },
           },
         ],
-        where: {
-          id: {
-            nin: await this.getCompletedOrderIds(),
-          },
-        },
         order: ['created_at DESC'],
       };
 
       const data = await this.orderRepo.find(filter);
-      let dataCount = await this.orderRepo.count(filter);
-      return {message: 'thành công', data: data, count: dataCount.count};
+      const count = await this.orderRepo.count();
+
+      return {data, count: count.count};
     } catch (e) {
-      return {error: `Internal server Error Occurred, Please try again`, e};
+      return {error: 'Server error'};
     }
-  }
-  async getCompletedOrderIds(): Promise<number[]> {
-    const completedOrders = await this.orderStatusRepo.find({
-      where: {or: [{status: 'complete'}, {status: 'cancel'}]},
-      fields: {orderId: true},
-    });
-    return completedOrders
-      .map(status => status.orderId)
-      .filter((id): id is number => id !== undefined);
   }
 
   @get('/order/gettorderId/{id}')
-  @response(200, {
-    description: 'Protected resource',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'string',
-        },
-      },
-    },
-  })
   async gettorderId(@param.path.number('id') id: number): Promise<any> {
     try {
       const data = await this.orderRepo.findById(id, {
-        include: [
-          {
-            relation: 'orderItems',
-          },
-        ],
+        include: [{relation: 'orderItems'}],
       });
-      console.log('data', data);
-      return {message: 'thành công', data: data};
+
+      return {data};
     } catch (e) {
-      return {error: `Internal server Error Occurred, Please try again`, e};
+      return {error: 'Không tìm thấy đơn'};
     }
   }
 
   @post('/order/updateorderstatus')
   @authenticate('jwt')
-  @response(200, {
-    description: 'Protected resource',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'string',
-        },
-      },
-    },
-  })
   async updateorderstatus(@requestBody() body: any = {}): Promise<any> {
     const {orderId, status} = body;
+
     if (!orderId || !status) {
-      return {error: 'Không thể update vì thiếu trường'};
+      return {error: 'Thiếu dữ liệu'};
     }
+
     try {
-      const ktOrder = await this.orderRepo.findById(orderId);
-      if (status === 'preparing') {
-        const ktOrderStatus = await this.orderStatusRepo.findOne({
-          where: {
-            orderId: orderId,
-            status: status,
-          },
-        });
-        if (ktOrderStatus && ktOrder) {
-          return {error: 'Đã có trạng thái này!'};
-        } else {
-          await this.orderStatusRepo.create({orderId: orderId, status: status});
-          let orderItems = await this.orderItemRepo.findOne({
-            where: {orderId: orderId},
-          });
-          if (orderItems?.menu_items && Array.isArray(orderItems.menu_items)) {
-            await this.updateIngredients(orderItems.menu_items);
-          } else {
-            throw new Error('menu_items không hợp lệ hoặc không tồn tại!');
-          }
-          return {
-            message: 'Update trạng thái đơn hàng thành công',
-          };
-        }
-      } else {
-        if (status === 'complete' || status === 'cancel') {
-          if (ktOrder.tableId !== null) {
-            await this.tableRepo.updateById(ktOrder.tableId, {
-              is_available: true,
-            });
-          }
-        }
-        const ktOrderStatus = await this.orderStatusRepo.findOne({
-          where: {
-            orderId: orderId,
-            status: status,
-          },
-        });
-        if (ktOrderStatus && ktOrder) {
-          return {error: 'Đã có trạng thái này!'};
-        } else {
-          await this.orderStatusRepo.create({orderId: orderId, status: status});
-          return {
-            message: 'Update trạng thái đơn hàng thành công',
-          };
-        }
+      const exists = await this.orderStatusRepo.findOne({
+        where: {orderId, status},
+      });
+
+      if (exists) {
+        return {error: 'Trạng thái đã tồn tại'};
       }
-    } catch (e) {
-      return {error: e};
+
+      await this.orderStatusRepo.create({
+        orderId,
+        status,
+      });
+
+      return {message: 'Cập nhật trạng thái thành công'};
+    } catch (e: any) {
+      return {error: e.message};
     }
   }
-
-  async updateIngredients(orderItems: Array<{id: number; quantity: number}>) {
-    for (const orderItem of orderItems) {
-      const menuItems = await this.menuItemsRepo.findById(orderItem.id);
-      if (!menuItems) {
-        throw new Error(`Danh mục món với id ${orderItem.id} không tìm thấy`);
-      }
-      for (const recipeIngredient of menuItems.ingredients) {
-        let ingredient = await this.ingredientsRepo.findById(
-          recipeIngredient.id,
-        );
-        const totalRequiredQuantity = convertUnit(
-          recipeIngredient.quantity * orderItem.quantity,
-          recipeIngredient.unit,
-          ingredient.unit,
-        );
-        if (!ingredient) {
-          throw new Error(
-            `Nguyên liệu với id ${recipeIngredient.id} không tìm thấy`,
-          );
-        }
-
-        if (ingredient.quantity < totalRequiredQuantity) {
-          throw new Error(
-            `Không đủ số lượng ${ingredient.name} (required: ${totalRequiredQuantity}, available: ${ingredient.quantity})`,
-          );
-        }
-        ingredient.quantity -= totalRequiredQuantity;
-        await this.ingredientsRepo.updateById(ingredient.id, ingredient);
-      }
-    }
-  }
-}
-function convertUnit(
-  quantity: number,
-  fromUnit: string,
-  toUnit: string,
-): number {
-  const unitConversion: any = {
-    kg: 1000,
-    g: 1,
-    liters: 1000,
-    ml: 1,
-    piece: 1,
-  };
-
-  if (fromUnit === toUnit) {
-    return quantity;
-  }
-
-  if (unitConversion[fromUnit] && unitConversion[toUnit]) {
-    return (quantity * unitConversion[fromUnit]) / unitConversion[toUnit];
-  }
-  throw new Error(`Không thể chuyển đổi đại lượng: ${fromUnit} và ${toUnit}`);
 }

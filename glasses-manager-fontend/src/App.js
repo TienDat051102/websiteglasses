@@ -16,6 +16,7 @@ import MenuItems from "./pages/table/menuitem";
 import Customer from "./pages/table/customer";
 import { NAVMENU } from "./common/constants";
 import NavMenu from "./pages/table/navMenu";
+import Information from "./pages/table/information";
 
 
 function App() {
@@ -76,6 +77,7 @@ function App() {
                     <Route path="/menu-categories" element={<Menucategories />} />
                     <Route path="/customer" element={<Customer />} />
                     <Route path="/navmenu" element={<NavMenu />} />
+                    <Route path="/information" element={<Information />} />
                     <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
                   </Routes>
                 </AdminLayout>

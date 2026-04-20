@@ -1,10 +1,42 @@
-// src/components/Header.js
 import React from "react";
 import { useInformation } from "../context/InformationContext";
+import { useCart } from "../context/CartContext";
 import Nav from "./Nav";
+import Offcanvas from "bootstrap/js/dist/offcanvas";
+
+import {
+  User,
+  Search,
+  ShoppingCart,
+  Menu,
+} from "lucide-react";
 
 const Header = () => {
   const { info, loading, error } = useInformation();
+
+  const {
+    cart,
+    totalItems,
+    totalPrice,
+    updateQuantity,
+    removeItem,
+  } = useCart();
+
+  const openCart = () => {
+    const el = document.getElementById("offcanvasCart");
+    if (!el) return;
+
+    const offcanvas = Offcanvas.getOrCreateInstance(el);
+    offcanvas.show();
+  };
+
+  const openSearch = () => {
+    const el = document.getElementById("offcanvasSearch");
+    if (!el) return;
+
+    const offcanvas = Offcanvas.getOrCreateInstance(el);
+    offcanvas.show();
+  };
 
   if (loading) return null;
   if (error) return <div>Error</div>;
@@ -12,139 +44,178 @@ const Header = () => {
   return (
     <>
       {/* ================= CART ================= */}
-      <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasCart">
+      <div className="offcanvas offcanvas-end" id="offcanvasCart">
         <div className="offcanvas-header">
-          <h5>Giỏ hàng</h5>
+          <h5 className="fw-bold">Giỏ hàng</h5>
           <button className="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
 
         <div className="offcanvas-body">
-          <ul className="list-group mb-3">
-            <li className="list-group-item text-center">
-              Giỏ hàng trống
-            </li>
-          </ul>
+          {cart.length === 0 ? (
+            <p className="text-muted text-center">Giỏ hàng trống</p>
+          ) : (
+            <>
+              {cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="d-flex align-items-center mb-3 border-bottom pb-2"
+                >
+                  <img
+                    src={item.image}
+                    alt=""
+                    width={60}
+                    height={60}
+                    className="me-2"
+                  />
 
-          <button className="btn btn-primary w-100">
-            Thanh toán
-          </button>
+                  <div className="flex-grow-1">
+                    <div className="fw-bold">{item.name}</div>
+                    <div style={{ fontWeight: 600, color: "rgb(215, 0, 24)", marginTop: "6px", fontSize: "15px" }}>
+                      {item.price.toLocaleString()} VND
+                    </div>
+
+                    <div className="d-flex align-items-center gap-2 mt-1">
+                      <button
+                        className="btn btn-sm btn-outline-secondary"
+                        onClick={() => updateQuantity(item.id, "dec")}
+                      >
+                        -
+                      </button>
+
+                      <span>{item.quantity}</span>
+
+                      <button
+                        className="btn btn-sm btn-outline-secondary"
+                        onClick={() => updateQuantity(item.id, "inc")}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => removeItem(item.id)}
+                  >
+                    x
+                  </button>
+                </div>
+              ))}
+
+              <div className="fw-bold text-end">
+                Tổng: {totalPrice.toLocaleString()} VND
+              </div>
+
+              <button className="btn btn-danger w-100 mt-3">
+                Thanh toán
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {/* ================= SEARCH OFFCANVAS ================= */}
-      <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasSearch">
+      <div className="offcanvas offcanvas-end" id="offcanvasSearch">
         <div className="offcanvas-header">
-          <h5>Tìm kiếm</h5>
+          <h5 className="fw-bold">Tìm kiếm</h5>
           <button className="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
 
         <div className="offcanvas-body">
-          <form className="d-flex">
+          <div className="d-flex gap-2">
             <input
               className="form-control"
-              placeholder="Tìm sản phẩm..."
+              placeholder="Tìm kính, gọng..."
             />
             <button className="btn btn-dark">Tìm</button>
-          </form>
+          </div>
         </div>
       </div>
 
-      {/* ================= HEADER ================= */}
-      <header>
+      <header className="bg-white shadow-sm sticky-top">
         <div className="container-fluid">
-          <div className="row py-3 border-bottom align-items-center">
+          <div className="row align-items-center py-3">
 
             {/* LOGO */}
             <div className="col-6 col-lg-3">
               <a href="/" className="text-decoration-none">
                 {info?.logo ? (
-                  <img src={info.logo} alt="logo" style={{ maxHeight: "50px" }} />
+                  <img src={info.logo} alt="logo" style={{ height: 45 }} />
                 ) : (
-                  <h4>{info?.name}</h4>
+                  <h4 className="fw-bold m-0">{info?.name}</h4>
                 )}
               </a>
             </div>
 
-            {/* SEARCH BAR (DESKTOP) */}
+  
             <div className="col-lg-5 d-none d-lg-block">
-              <div className="bg-light p-2 rounded-4 d-flex">
-
+              <div className="d-flex border rounded-pill overflow-hidden">
                 <input
-                  type="text"
-                  className="form-control border-0 bg-transparent"
+                  className="form-control border-0 px-3"
                   placeholder="Tìm sản phẩm..."
                 />
-
-                <button className="btn btn-dark">
-                  Search
+                <button className="btn btn-danger px-4">
+                  <Search size={18} />
                 </button>
-
               </div>
             </div>
 
-            {/* RIGHT */}
             <div className="col-6 col-lg-4 d-flex justify-content-end align-items-center gap-3">
 
-              {/* PHONE */}
-              <span className="text-muted d-none d-md-block">
-                {info?.sdt}
+              <span className="text-muted small d-none d-md-block">
+                📞 {info?.sdt}
               </span>
 
-              {/* USER */}
-              <button className="bg-light border-0 p-2 rounded-circle">
-                <i className="bi bi-person"></i>
+              <button className="btn btn-light rounded-circle p-2">
+                <User size={18} />
               </button>
 
-              {/* SEARCH MOBILE */}
               <button
-                className="bg-light border-0 p-2 rounded-circle d-lg-none"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasSearch"
+                className="btn btn-light rounded-circle p-2 d-lg-none"
+                onClick={openSearch}
               >
-                <i className="bi bi-search"></i>
+                <Search size={18} />
               </button>
 
-              {/* CART */}
               <button
-                className="bg-light border-0 p-2 rounded-circle position-relative"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasCart"
+                className="btn btn-light rounded-circle p-2 position-relative"
+                onClick={openCart}
               >
-                <i className="bi bi-cart"></i>
+                <ShoppingCart size={18} />
 
-                <span className="position-absolute top-0 start-100 translate-middle badge bg-danger">
-                  0
+                <span className="position-absolute top-0 start-100 translate-middle badge bg-danger" style={{ fontWeight: 600, color: "rgb(215, 0, 24)", marginTop: "6px", fontSize: "15px" }}>
+                  {totalItems}
                 </span>
               </button>
-
             </div>
           </div>
         </div>
 
-        {/* ================= MENU ================= */}
-        <div className="container-fluid">
-          <nav className="navbar navbar-expand-lg">
 
-            <button
-              className="navbar-toggler"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#offcanvasNavbar"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
+        <div className="border-top">
+          <div className="container-fluid">
+            <nav className="navbar navbar-expand-lg">
 
-            <div className="offcanvas offcanvas-end" id="offcanvasNavbar">
-              <div className="offcanvas-header">
-                <h5>Menu</h5>
-                <button className="btn-close" data-bs-dismiss="offcanvas"></button>
+              <button
+                className="navbar-toggler"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar"
+              >
+                <Menu size={22} />
+              </button>
+
+              <div className="offcanvas offcanvas-start" id="offcanvasNavbar">
+                <div className="offcanvas-header">
+                  <h5 className="fw-bold">Menu</h5>
+                  <button className="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+
+                <div className="offcanvas-body">
+                  <Nav />
+                </div>
               </div>
 
-              <div className="offcanvas-body">
-                <Nav />
-              </div>
-            </div>
-
-          </nav>
+            </nav>
+          </div>
         </div>
       </header>
     </>

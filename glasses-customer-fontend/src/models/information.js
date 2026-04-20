@@ -1,17 +1,16 @@
 import Api from './Axios';
 
-class Information{
-    static async getinformation(id){
-        try{
-            const URL = '/information/listinformation';
-            const {data} = await Api.get(URL, {id: id})
-            return data.data;
-        }
-        catch(e){
-            console.error('Lỗi khi lấy danh sách:', e);
-            throw e; 
-        }
+class Information {
+  static async getinformation() {
+    try {
+      const URL = '/information';
+      const { data } = await Api.get(URL);
+      return data.data;
+    } catch (e) {
+      console.error('Lỗi khi lấy thông tin:', e);
+      throw e;
     }
+  }
 }
 
 export default Information;

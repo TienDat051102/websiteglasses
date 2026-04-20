@@ -25,7 +25,6 @@ const Nav = () => {
           className={`nav-item ${item.navmenuitems ? "dropdown" : ""}`}
         >
 
-          {/* ===== MAIN MENU ===== */}
           {!item.navmenuitems ? (
             <a
               href={item.path}

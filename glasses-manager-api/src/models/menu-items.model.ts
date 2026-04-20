@@ -11,18 +11,19 @@ export class MenuItems extends Entity {
 
   @property({
     type: 'string',
+    required: true,
   })
-  name: string; // Tên món ăn
+  name: string;
 
   @property({
     type: 'string',
   })
-  description: string; // Mô tả món ăn
+  description: string;
 
   @property({
     type: 'string',
   })
-  image: string; // Ảnh món ăn
+  image: string;
 
   @property({
     type: 'number',
@@ -30,35 +31,32 @@ export class MenuItems extends Entity {
       dataType: 'decimal',
     },
   })
-  price: number; // Giá món ăn
-
-  @property({
-    type: 'string',
-  })
-  instructions: string; // Hướng dẫn chế biến món ăn
+  price: number;
 
   @property({
     type: 'number',
   })
-  preparation_time: number; // Thời gian chuẩn bị (phút)
+  import_price?: number;
 
   @property({
-    type: 'array',
-    itemType: 'object',
-    postgresql: {
-      dataType: 'jsonb',
-    },
+    type: 'number',
+    default: 0,
   })
-  ingredients: {
-    id: number; // ID của nguyên liệu
-    quantity: number; // Số lượng cần thiết
-    unit: string; // Đơn vị đo lường (kg, g, liters, ...)
-  }[];
+  stock: number;
 
-  //trạng thái món ăn có được bán hay không
+  @property({
+    type: 'string',
+  })
+  brand?: string;
+
+  @property({
+    type: 'string',
+  })
+  type?: string;
+
   @property({
     type: 'boolean',
-    default: false,
+    default: true,
   })
   status?: boolean;
 
@@ -67,11 +65,18 @@ export class MenuItems extends Entity {
   })
   category_id: number;
 
+  @property({
+    type: 'boolean',
+    default: false,
+  })
+  is_featured?: boolean;
+
+
   constructor(data?: Partial<MenuItems>) {
     super(data);
   }
 }
 
-export interface MenuItemsRelations {}
+export interface MenuItemsRelations { }
 
 export type MenuItemsWithRelations = MenuItems & MenuItemsRelations;
