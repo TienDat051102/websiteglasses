@@ -25,7 +25,7 @@ class MenuCategoriesForm extends Component {
     };
   }
 
- handleInputChange = (e, field) => {
+  handleInputChange = (e, field) => {
     let value = e.target.value;
 
     if (field === "status") value = value === "true";
@@ -59,7 +59,7 @@ class MenuCategoriesForm extends Component {
     }
     this.props.onClose();
   };
-    handleImageChange = (e) => {
+  handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -80,7 +80,6 @@ class MenuCategoriesForm extends Component {
             <div className="form-group">
               <label>Tên danh mục:</label>
               <input
-  
                 value={name}
                 onChange={(e) => this.handleInputChange(e, "name")}
                 className="form-control"
@@ -90,18 +89,18 @@ class MenuCategoriesForm extends Component {
             <div className="form-group">
               <label>Biểu tượng:</label>
               <input
-                  type="file"
-                  className="form-control"
-                  onChange={this.handleImageChange}
+                type="file"
+                className="form-control"
+                onChange={this.handleImageChange}
+              />
+              {icon && (
+                <img
+                  src={`${process.env.REACT_APP_API_URL}${icon}`}
+                  alt=""
+                  className="mt-2"
+                  style={{ maxHeight: 120 }}
                 />
-                {icon && (
-                  <img
-                    src={icon}
-                    alt=""
-                    className="mt-2"
-                    style={{ maxHeight: 120 }}
-                  />
-                )}
+              )}
             </div>
             <div className="form-group">
               <label>Trạng Thái:</label>
@@ -110,13 +109,11 @@ class MenuCategoriesForm extends Component {
                 onChange={(e) => this.handleInputChange(e, "status")}
                 className="form-control"
               >
-                  <option value={true}>Hoạt động</option>
-                  <option value={false}>Không hoạt động</option>
+                <option value={true}>Hoạt động</option>
+                <option value={false}>Không hoạt động</option>
               </select>
             </div>
 
-
-          
             <br />
             <div className="button-group">
               <Button type="submit" color="success" onClick={this.handleSubmit}>

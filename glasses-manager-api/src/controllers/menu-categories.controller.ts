@@ -2,6 +2,9 @@ import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {get, param, post, requestBody, response} from '@loopback/rest';
+import fs from 'fs';
+import path from 'path';
+import {v4 as uuidv4} from 'uuid';
 import {MenucategoriesRepository, MenuItemsRepository} from '../repositories';
 import {JWTService} from '../services/jwt.service';
 
@@ -12,12 +15,31 @@ export class MenuCategoriesController {
     private menucategoriesrepo: MenucategoriesRepository,
     @repository(MenuItemsRepository)
     private menuitemrepo: MenuItemsRepository,
-  ) { }
+  ) {}
+
+  private saveBase64Image(base64: string): string {
+    if (!base64) return '';
+
+    const matches = base64.match(/^data:(image\/\w+);base64,(.+)$/);
+
+    if (!matches) return base64;
+
+    const ext = matches[1].split('/')[1];
+    const data = matches[2];
+
+    const buffer = Buffer.from(data, 'base64');
+
+    const fileName = `${uuidv4()}.${ext}`;
+
+    const filePath = path.resolve(__dirname, '../../public/uploads', fileName);
+
+    fs.writeFileSync(filePath, new Uint8Array(buffer));
+
+    return `/uploads/${fileName}`;
+  }
 
   @get('/menucategories/listmenucategories')
-  async listmenucategories(
-    @param.query.number('id') id: number,
-  ): Promise<any> {
+  async listmenucategories(@param.query.number('id') id: number): Promise<any> {
     const filter: any = {
       include: [
         {
@@ -100,13 +122,12 @@ export class MenuCategoriesController {
       },
     },
   })
-  async getMenuCategoriesCustomer(
-  ): Promise<any> {
+  async getMenuCategoriesCustomer(): Promise<any> {
     try {
       const data = await this.menucategoriesrepo.find({
         where: {
           status: true,
-        }
+        },
       });
       return {
         message: `Xuất dữ liệu thành công`,
@@ -140,7 +161,9 @@ export class MenuCategoriesController {
         icon: icon,
         status: status,
       };
-      const ktdata = await this.menucategoriesrepo.findOne({where: {name: name}});
+      const ktdata = await this.menucategoriesrepo.findOne({
+        where: {name: name},
+      });
       if (!ktdata) {
         return {message: 'Danh mục món ăn đã tồn tại'};
       }
@@ -169,14 +192,21 @@ export class MenuCategoriesController {
   ): Promise<any> {
     const {id, name, icon, status} = body;
     try {
+      let iconUrl = icon;
+
+      if (icon && icon.startsWith('data:image')) {
+        iconUrl = this.saveBase64Image(icon);
+      }
       if (!id) {
-        const ktdata = await this.menucategoriesrepo.find({where: {name: name}});
+        const ktdata = await this.menucategoriesrepo.find({
+          where: {name: name},
+        });
         if (!ktdata) {
           return {message: 'Tên danh mục món ăn đã tồn tại'};
         } else {
           const payload = {
             name: name,
-            icon: icon,
+            icon: iconUrl,
             status: status,
           };
           await this.menucategoriesrepo.create(payload);
@@ -189,7 +219,7 @@ export class MenuCategoriesController {
         }
         const payload = {
           name: name,
-          icon: icon,
+          icon: iconUrl,
           status: status,
         };
         await this.menucategoriesrepo.updateById(id, payload);

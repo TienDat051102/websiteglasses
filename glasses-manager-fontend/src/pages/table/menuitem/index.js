@@ -104,9 +104,7 @@ class MenuItems extends Component {
                 <li className="breadcrumb-item">
                   <a href="index.html">Trang Chủ</a>
                 </li>
-                <li className="breadcrumb-item active">
-                  Quản Lý Sản Phẩm
-                </li>
+                <li className="breadcrumb-item active">Quản Lý Sản Phẩm</li>
               </ol>
             </nav>
           </div>
@@ -126,71 +124,85 @@ class MenuItems extends Component {
                       <table className="table table-bordered">
                         <thead>
                           <tr>
-  <th>Tên Sản Phẩm</th>
-  <th>Ảnh</th>
-  <th>Giá</th>
-  <th>Tồn Kho</th>
-  <th>Thương Hiệu</th>
-  <th>Loại</th>
-  <th>Trạng Thái</th>
-  <th>Actions</th>
-</tr>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Ảnh</th>
+                            <th>Giá</th>
+                            <th>Tồn Kho</th>
+                            <th>Thương Hiệu</th>
+                            <th>Loại</th>
+                            <th>Trạng Thái</th>
+                            <th>Actions</th>
+                          </tr>
                         </thead>
 
                         <tbody>
                           {Array.isArray(menuItems) && menuItems.length > 0 ? (
                             menuItems.map((item) => (
                               <tr key={item.id}>
-  <td>{item.name}</td>
+                                <td>{item.name}</td>
 
-  <td>
-    {item.image ? (
-      <img
-        src={item.image}
-        alt={item.name}
-        width="50"
-        height="50"
-        className="img-thumbnail"
-      />
-    ) : (
-      <span>Chưa có ảnh</span>
-    )}
-  </td>
+                                <td>
+                                  {item.image ? (
+                                    <img
+                                      src={`${process.env.REACT_APP_API_URL}${item.image}`}
+                                      alt={item.name}
+                                      width="50"
+                                      height="50"
+                                      className="img-thumbnail"
+                                    />
+                                  ) : (
+                                    <span>Chưa có ảnh</span>
+                                  )}
+                                </td>
 
-  <td>{item.price?.toLocaleString()} VND</td>
+                                <td>{item.price?.toLocaleString()} VND</td>
 
-  <td>
-    <span className={item.stock <= 5 ? "text-danger" : ""}>
-      {item.stock}
-    </span>
-  </td>
+                                <td>
+                                  <span
+                                    className={
+                                      item.stock <= 5 ? "text-danger" : ""
+                                    }
+                                  >
+                                    {item.stock}
+                                  </span>
+                                </td>
 
-  <td>{item.brand || "—"}</td>
+                                <td>{item.brand || "—"}</td>
 
-  <td>{item.type || "—"}</td>
+                                <td>{item.type || "—"}</td>
 
-  <td>
-    <span className={item.status ? "text-success" : "text-danger"}>
-      {item.status ? "Đang Bán" : "Ngừng Bán"}
-    </span>
-  </td>
+                                <td>
+                                  <span
+                                    className={
+                                      item.status
+                                        ? "text-success"
+                                        : "text-danger"
+                                    }
+                                  >
+                                    {item.status ? "Đang Bán" : "Ngừng Bán"}
+                                  </span>
+                                </td>
 
-            <td>
-              <Button
-                variant="warning"
-                onClick={() => this.handleActionClick("edit", item)}
-              >
-                <FaEdit />
-              </Button>
+                                <td>
+                                  <Button
+                                    variant="warning"
+                                    onClick={() =>
+                                      this.handleActionClick("edit", item)
+                                    }
+                                  >
+                                    <FaEdit />
+                                  </Button>
 
-              <Button
-                variant="danger"
-                onClick={() => this.handleActionClick("delete", item)}
-              >
-                <FaTrash />
-              </Button>
-            </td>
-          </tr>
+                                  <Button
+                                    variant="danger"
+                                    onClick={() =>
+                                      this.handleActionClick("delete", item)
+                                    }
+                                  >
+                                    <FaTrash />
+                                  </Button>
+                                </td>
+                              </tr>
                             ))
                           ) : (
                             <tr>
@@ -229,21 +241,13 @@ class MenuItems extends Component {
           </section>
         </main>
 
-        <Modal show={showForm} onHide={this.handleCloseForm}>
-          <Modal.Header closeButton>
-            <Modal.Title>
-              {formType === "create"
-                ? "Thêm Sản Phẩm"
-                : "Cập Nhật Sản Phẩm"}
-            </Modal.Title>
-          </Modal.Header>
-
+        {showForm && (
           <MenuItemModal
             type={formType}
             data={selectedMenuItem}
             onClose={this.handleCloseForm}
           />
-        </Modal>
+        )}
       </>
     );
   }

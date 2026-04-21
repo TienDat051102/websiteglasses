@@ -893,7 +893,6 @@ h1,h2,h3,h4,h5,h6 {
   gap: 6px;
 }
 
-/* mỗi item = 1 dòng */
 .category-item {
   width: 100%;
   display: block;

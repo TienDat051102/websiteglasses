@@ -42,6 +42,7 @@ export class Application extends BootMixin(
     this.component(AuthorizationComponent);
     this.bind('services.EmailService').toClass(EmailService);
     this.sequence(MySequence);
+    this.static('/uploads', path.join(__dirname, '../public/uploads'));
 
     // thiết lập trang chính
     this.static('/', path.join(__dirname, '../public'));
@@ -53,7 +54,6 @@ export class Application extends BootMixin(
     this.projectRoot = __dirname;
     this.bootOptions = {
       controllers: {
-        // Tùy chỉnh các quy tắc ControllerBooter
         dirs: ['controllers'],
         extensions: ['.controller.js'],
         nested: true,

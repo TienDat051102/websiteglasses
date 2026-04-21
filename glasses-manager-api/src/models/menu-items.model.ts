@@ -1,4 +1,6 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
+import {MenuItemDetails} from './menu-items-details.model';
+import {MenuItemImages} from './menu-items-images.model';
 
 @model()
 export class MenuItems extends Entity {
@@ -71,12 +73,17 @@ export class MenuItems extends Entity {
   })
   is_featured?: boolean;
 
+  @hasMany(() => MenuItemImages, {keyTo: 'menu_item_id'})
+  images: MenuItemImages[];
+
+  @hasMany(() => MenuItemDetails, {keyTo: 'menu_item_id'})
+  details: MenuItemDetails[];
 
   constructor(data?: Partial<MenuItems>) {
     super(data);
   }
 }
 
-export interface MenuItemsRelations { }
+export interface MenuItemsRelations {}
 
 export type MenuItemsWithRelations = MenuItems & MenuItemsRelations;

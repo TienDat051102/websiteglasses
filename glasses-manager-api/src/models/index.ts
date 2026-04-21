@@ -3,6 +3,8 @@ export * from './customers.model';
 export * from './discounts.model';
 export * from './information.model';
 export * from './menu-categories.model';
+export * from './menu-items-details.model';
+export * from './menu-items-images.model';
 export * from './menu-items.model';
 export * from './nav-menu-items.model';
 export * from './nav-menu.model';
@@ -12,4 +14,3 @@ export * from './orders.model';
 export * from './payments.model';
 export * from './productInventory.model';
 export * from './users.model';
-

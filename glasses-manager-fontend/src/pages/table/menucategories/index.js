@@ -30,7 +30,7 @@ const columns = [
     accessor: "icon",
     render: (value) => (
       <img
-        src={value}
+        src={`${process.env.REACT_APP_API_URL}${value}`}
         alt=""
         style={{ width: 50, height: 50, objectFit: "cover" }}
       />
@@ -45,7 +45,6 @@ const columns = [
       </span>
     ),
   },
-
 ];
 
 class MenuCategories extends Component {
@@ -87,15 +86,14 @@ class MenuCategories extends Component {
   };
 
   handleActionClick = async (action, row) => {
-
     if (action === "delete") {
       alert(
-        "Bạn có chắc chắn muốn xóa danh mục món ăn này không điều đó sẽ khiến các món ăn thuộc danh mục này bị khóa"
+        "Bạn có chắc chắn muốn xóa danh mục món ăn này không điều đó sẽ khiến các món ăn thuộc danh mục này bị khóa",
       );
       const payload = { id: row.id };
       this.props.DELETE_MENUCATEGORIES(payload);
-    
-        this.componentDidMount();
+
+      this.componentDidMount();
     } else if (action === "edit") {
       this.setState({
         showForm: true,
@@ -134,7 +132,7 @@ class MenuCategories extends Component {
   }
 
   render() {
-    let { showForm, formType,selectedMenuCate } = this.state;
+    let { showForm, formType, selectedMenuCate } = this.state;
 
     return (
       <>

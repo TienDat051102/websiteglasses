@@ -6,6 +6,7 @@ import {
   FaStar,
   FaStarHalfAlt,
   FaRegStar,
+  FaEye,
 } from "react-icons/fa";
 
 function ProductCard({ item, navigate }) {
@@ -35,12 +36,36 @@ function ProductCard({ item, navigate }) {
 
   return (
     <div className="product-item card h-100 border-0 shadow-sm position-relative">
-      {/* DISCOUNT */}
       <span className="badge bg-danger position-absolute m-2">-15%</span>
 
-      <a class="btn-wishlist">
-        <FaHeart />
-      </a>
+      <div
+        onClick={() => navigate(`/product/${item.id}`)}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          background: "#fff",
+          borderRadius: "50%",
+          width: 36,
+          height: 36,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+          transition: "0.2s",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "#59b67c";
+          e.currentTarget.style.color = "#fff";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "#fff";
+          e.currentTarget.style.color = "#000";
+        }}
+      >
+        <FaEye size={14} />
+      </div>
 
       <div
         onClick={() => navigate(`/product/${item.id}`)}
@@ -54,7 +79,7 @@ function ProductCard({ item, navigate }) {
         }}
       >
         <img
-          src={item.image || "/images/default-glasses.png"}
+          src={`${process.env.REACT_APP_API_URL}${item.image}`}
           alt={item.name}
           style={{
             maxHeight: "100%",
@@ -80,13 +105,11 @@ function ProductCard({ item, navigate }) {
 
         <div style={{ fontSize: 12, color: "#888" }}>1 sản phẩm</div>
 
-        {/* ⭐ RATING */}
         <div className="rating-box">
           <div className="stars">{renderStars(rating)}</div>
           <span className="rating-number">({rating})</span>
         </div>
 
-        {/* PRICE */}
         <div
           style={{
             fontWeight: 600,

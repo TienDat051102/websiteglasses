@@ -25,6 +25,8 @@ export const APP_MODELS = [
   'ProductInventory',
   'Payments',
   'Discounts',
+  'MenuItemDetails',
+  'MenuItemImages',
 ];
 
 export async function migrate(app: any, args: string[]) {

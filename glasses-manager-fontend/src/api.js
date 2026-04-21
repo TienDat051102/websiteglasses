@@ -1,6 +1,6 @@
 // axios.js
-import axios from 'axios';
-import { showLoading, hideLoading } from './loading';
+import axios from "axios";
+import { showLoading, hideLoading } from "./loading";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
@@ -8,7 +8,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -18,7 +18,7 @@ api.interceptors.request.use(
   (error) => {
     hideLoading();
     return Promise.reject(error);
-  }
+  },
 );
 
 api.interceptors.response.use(
@@ -31,25 +31,23 @@ api.interceptors.response.use(
 
     const status = error.response?.status;
     if (status === 401) {
-      alert('Token hết hạn, vui lòng đăng nhập lại');
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      window.location.href = '/';
+      alert("Token hết hạn, vui lòng đăng nhập lại");
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      window.location.href = "/";
     } else {
-      // ✅ Các lỗi khác chỉ log ra để debug
-      console.error('API Error:', error.response?.data || error.message);
+      console.error("API Error:", error.response?.data || error.message);
 
-      // 👉 Hiển thị message backend nếu có
       const message =
         error.response?.data?.error?.message ||
         error.response?.data?.message ||
-        'Lỗi server';
+        "Lỗi server";
 
       alert(message);
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

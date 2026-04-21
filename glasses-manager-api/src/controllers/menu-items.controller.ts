@@ -2,14 +2,44 @@ import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {get, param, post, requestBody} from '@loopback/rest';
+import fs from 'fs';
+import path from 'path';
+import {v4 as uuidv4} from 'uuid';
 import {MenuItemsRepository} from '../repositories';
+import {MenuItemDetailsRepository} from '../repositories/menu-item-details.repository';
+import {MenuItemImagesRepository} from '../repositories/menu-item-images.repository';
 import {JWTService} from '../services/jwt.service';
 
 export class MenuItemController {
   constructor(
     @inject('services.JWTService') private jwtService: JWTService,
     @repository(MenuItemsRepository) private menuRepo: MenuItemsRepository,
+    @repository(MenuItemImagesRepository)
+    private imageRepo: MenuItemImagesRepository,
+    @repository(MenuItemDetailsRepository)
+    private detailRepo: MenuItemDetailsRepository,
   ) {}
+
+  private saveBase64Image(base64: string): string {
+    if (!base64) return '';
+
+    const matches = base64.match(/^data:(image\/\w+);base64,(.+)$/);
+
+    if (!matches) return base64;
+
+    const ext = matches[1].split('/')[1];
+    const data = matches[2];
+
+    const buffer = Buffer.from(data, 'base64');
+
+    const fileName = `${uuidv4()}.${ext}`;
+
+    const filePath = path.resolve(__dirname, '../../public/uploads', fileName);
+
+    fs.writeFileSync(filePath, new Uint8Array(buffer));
+
+    return `/uploads/${fileName}`;
+  }
 
   @get('/menuitem/getmenuitems')
   @authenticate('jwt')
@@ -27,8 +57,16 @@ export class MenuItemController {
         name: {ilike: `%${searchWord}%`},
       },
       order: ['id DESC'],
-    };
 
+      include: [
+        {
+          relation: 'images',
+        },
+        {
+          relation: 'details',
+        },
+      ],
+    };
     try {
       const data = await this.menuRepo.find(filter);
       const dataCount = await this.menuRepo.count({
@@ -116,13 +154,22 @@ export class MenuItemController {
       brand,
       type,
       is_featured,
+      newImagesDetails = [],
+      deletedImageIds = [],
+      details = [],
     } = body;
 
     try {
+      let imageUrl = image;
+
+      if (image && image.startsWith('data:image')) {
+        imageUrl = this.saveBase64Image(image);
+      }
+
       const payload: any = {
         name,
         description,
-        image,
+        image: imageUrl,
         price,
         status,
         category_id,
@@ -133,31 +180,77 @@ export class MenuItemController {
         is_featured,
       };
 
+      let productId = id;
+
       if (!id) {
         const exist = await this.menuRepo.findOne({
-          where: {name: name},
+          where: {name},
         });
 
         if (exist) {
-          return {message: 'Sản phẩm đã tồn tại, vui lòng chỉnh sửa!'};
+          return {message: 'Sản phẩm đã tồn tại'};
         }
 
-        await this.menuRepo.create(payload);
+        const created = await this.menuRepo.create(payload);
+        productId = created.id;
+      } else {
+        const exist = await this.menuRepo.findById(id);
 
-        return {message: `Thêm sản phẩm thành công`};
+        if (!exist) {
+          return {message: 'Không tìm thấy sản phẩm'};
+        }
+
+        await this.menuRepo.updateById(id, payload);
+
+        const images = await this.imageRepo.find({
+          where: {id: {inq: deletedImageIds}},
+        });
+        for (const img of images) {
+          const filePath = path.join(__dirname, '../../public', img.image_url);
+
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        }
+        await this.imageRepo.deleteAll({
+          id: {inq: deletedImageIds},
+        });
+
+        await this.detailRepo.deleteAll({
+          menu_item_id: id,
+        });
       }
 
-      const exist = await this.menuRepo.findById(id);
+      for (let i = 0; i < newImagesDetails.length; i++) {
+        let img = newImagesDetails[i];
 
-      if (!exist) {
-        return {message: `Không tìm thấy sản phẩm`};
+        let imgUrl = this.saveBase64Image(img);
+
+        await this.imageRepo.create({
+          menu_item_id: productId,
+          image_url: imgUrl,
+          is_main: true,
+        });
       }
 
-      await this.menuRepo.updateById(id, payload);
+      if (details.length > 0) {
+        const d = details[0];
 
-      return {message: 'Cập nhật sản phẩm thành công'};
+        await this.detailRepo.create({
+          menu_item_id: productId,
+          description: d.description,
+          specifications: d.specifications || '',
+        });
+      }
+
+      return {
+        message: id ? 'Cập nhật thành công' : 'Thêm thành công',
+      };
     } catch (e) {
-      return {error: `Internal server Error Occurred, Please try again`, e};
+      return {
+        error: 'Internal server error',
+        detail: e,
+      };
     }
   }
 
