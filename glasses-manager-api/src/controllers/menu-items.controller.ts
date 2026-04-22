@@ -117,9 +117,15 @@ export class MenuItemController {
       limit: typeof limit === 'number' ? limit : 10,
       where,
       order: orderBy,
+      include: [
+        {
+          relation: 'images',
+        },
+        {
+          relation: 'details',
+        },
+      ],
     };
-
-    console.log('filter', filter);
 
     try {
       const data = await this.menuRepo.find(filter);

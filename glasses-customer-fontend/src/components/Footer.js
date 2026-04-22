@@ -1,122 +1,97 @@
 import React from "react";
 import { useInformation } from "../context/InformationContext";
+import { FaFacebookF, FaYoutube, FaInstagram } from "react-icons/fa";
+import { Mail, Phone, MapPin, Clock } from "lucide-react";
 
 const Footer = () => {
-  const { info, loading, error } = useInformation();
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  const { info } = useInformation();
 
   return (
-    <>
-      <br />
-      <footer className="py-5">
-        <div className="container-fluid">
-          <div className="row">
-            {/* LOGO + INFO */}
-            <div className="col-lg-3 col-md-6 col-sm-6">
-              <div className="footer-menu">
-                {/* ✅ LOGO từ API */}
-                {info?.logo && (
-                  <img src={info.logo} alt="logo" style={{ width: 120 }} />
-                )}
+    <footer style={{ background: "#f8fafc" }}>
+      <div className="container-fluid py-5">
+        <div className="row gy-4">
+          {/* LOGO + INFO */}
+          <div className="col-lg-3 col-md-6">
+            {info?.logo && (
+              <img src={info.logo} alt="logo" style={{ width: 130 }} />
+            )}
 
-                {/* ✅ THÔNG TIN */}
-                <div className="mt-3">
-                  <p>
-                    <b>SĐT:</b> {info?.sdt}
-                  </p>
-                  <p>
-                    <b>Email:</b> {info?.email}
-                  </p>
-                  <p>
-                    <b>Địa chỉ:</b> {info?.location}
-                  </p>
-                  <p>
-                    <b>Giờ mở cửa:</b> {info?.openhours}
-                  </p>
-                </div>
-
-                <div className="social-links mt-3">
-                  <ul className="d-flex list-unstyled gap-2">
-                    <li>
-                      <a href="#" className="btn btn-outline-light">
-                        FB
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="btn btn-outline-light">
-                        TW
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="btn btn-outline-light">
-                        YT
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+            <div className="mt-3 footer-info">
+              <p>
+                <Phone size={14} /> {info?.sdt}
+              </p>
+              <p>
+                <Mail size={14} /> {info?.email}
+              </p>
+              <p>
+                <MapPin size={14} /> {info?.location}
+              </p>
+              <p>
+                <Clock size={14} /> {info?.openhours}
+              </p>
             </div>
 
-            {/* MENU 1 */}
-            <div className="col-md-2 col-sm-6">
-              <div className="footer-menu">
-                <h5>Thông tin</h5>
-                <ul className="list-unstyled">
-                  <li>
-                    <a href="#">Giới thiệu</a>
-                  </li>
-                  <li>
-                    <a href="#">Liên hệ</a>
-                  </li>
-                  <li>
-                    <a href="#">Chính sách</a>
-                  </li>
-                </ul>
-              </div>
+            {/* SOCIAL */}
+            <div className="d-flex gap-2 mt-3">
+              <a className="social-btn fb">
+                <FaFacebookF />
+              </a>
+              <a className="social-btn yt">
+                <FaYoutube />
+              </a>
+              <a className="social-btn ig">
+                <FaInstagram />
+              </a>
             </div>
+          </div>
 
-            {/* MENU 2 */}
-            <div className="col-md-2 col-sm-6">
-              <div className="footer-menu">
-                <h5>Hỗ trợ</h5>
-                <ul className="list-unstyled">
-                  <li>
-                    <a href="#">FAQ</a>
-                  </li>
-                  <li>
-                    <a href="#">Đổi trả</a>
-                  </li>
-                  <li>
-                    <a href="#">Vận chuyển</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+          {/* MENU */}
+          <div className="col-md-2 col-6">
+            <h6 className="footer-title">Thông tin</h6>
+            <ul className="footer-link">
+              <li>
+                <a href="#">Giới thiệu</a>
+              </li>
+              <li>
+                <a href="#">Liên hệ</a>
+              </li>
+              <li>
+                <a href="#">Chính sách</a>
+              </li>
+            </ul>
+          </div>
 
-            {/* SUBSCRIBE */}
-            <div className="col-lg-3 col-md-6 col-sm-6">
-              <div className="footer-menu">
-                <h5>Nhận tin</h5>
-                <p>Nhận ưu đãi mới nhất từ shop kính</p>
+          <div className="col-md-2 col-6">
+            <h6 className="footer-title">Hỗ trợ</h6>
+            <ul className="footer-link">
+              <li>
+                <a href="#">FAQ</a>
+              </li>
+              <li>
+                <a href="#">Đổi trả</a>
+              </li>
+              <li>
+                <a href="#">Vận chuyển</a>
+              </li>
+            </ul>
+          </div>
 
-                <form className="d-flex">
-                  <input
-                    className="form-control"
-                    type="email"
-                    placeholder="Email"
-                  />
-                  <button className="btn btn-dark">Subscribe</button>
-                </form>
-              </div>
+          {/* SUBSCRIBE */}
+          <div className="col-lg-3 col-md-6">
+            <h6 className="footer-title">Nhận ưu đãi</h6>
+            <p className="footer-desc">Đăng ký để nhận khuyến mãi mới nhất</p>
+
+            <div className="d-flex mt-2">
+              <input
+                className="form-control footer-input"
+                placeholder="Nhập email..."
+              />
+              <button className="footer-btn">Gửi</button>
             </div>
           </div>
         </div>
-      </footer>
-
-      {/* BOTTOM */}
-    </>
+      </div>
+    </footer>
   );
 };
 

@@ -1,10 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import Information from "../models/Information"; // Đảm bảo rằng bạn đã có model gọi API
+import Information from "../models/Information";
 
-// Tạo context
 const InformationContext = createContext();
 
-// Provider component
 export const InformationProvider = ({ children }) => {
   const [info, setInfo] = useState(null);
   const [loading, setLoading] = useState(true);

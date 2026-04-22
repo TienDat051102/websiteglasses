@@ -54,7 +54,6 @@ const About = () => {
           </div>
         </div>
 
-        {/* SWIPER */}
         <div className="row">
           <div className="col-md-12">
             <Swiper
@@ -78,7 +77,7 @@ const About = () => {
                     style={{ cursor: "pointer" }}
                   >
                     <img
-                      src={item.icon}
+                      src={`${process.env.REACT_APP_API_URL}${item.icon}`}
                       alt={item.name}
                       className="img-fluid"
                       style={{ height: 80, objectFit: "contain" }}
