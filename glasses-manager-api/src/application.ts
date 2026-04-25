@@ -14,6 +14,7 @@ import {
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import * as dotenv from 'dotenv';
+dotenv.config();
 import path from 'path';
 
 import {EmailController} from './controllers';
@@ -27,8 +28,6 @@ import {JWTService} from './services/jwt.service';
 import './strategies/customer-jwt.strategy';
 import {CustomerJWTStrategy} from './strategies/customer-jwt.strategy';
 import {JWTStrategy} from './strategies/jwt.strategy';
-
-dotenv.config();
 
 export interface PackageInfo {
   name: string;
@@ -53,32 +52,26 @@ export class Application extends BootMixin(
       host: process.env.HOST || '0.0.0.0',
     });
 
-    // ================= COMPONENT =================
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
     this.component(AuthorizationComponent);
 
-    // ================= CONTROLLER =================
     this.controller(EmailController);
 
-    // ================= SERVICES =================
     this.bind('services.EmailService').toClass(EmailService);
     this.bind('services.JWTService').toClass(JWTService);
     this.bind('services.CustomerJWTService').toClass(CustomerJWTService);
 
-    // ================= STRATEGY =================
     registerAuthenticationStrategy(this, JWTStrategy);
     registerAuthenticationStrategy(this, CustomerJWTStrategy);
 
     this.sequence(MySequence);
 
-    // 🔥 FIX STATIC PATH
     const publicPath = path.resolve(__dirname, '../public');
 
     this.static('/uploads', path.join(publicPath, 'uploads'));
     this.static('/', publicPath);
 
-    // ================= EXPLORER =================
     this.configure(RestExplorerBindings.COMPONENT).to({
       path: '/explorer',
     });

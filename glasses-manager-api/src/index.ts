@@ -1,5 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import {Application, ApplicationConfig} from './application';
-
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
@@ -10,7 +11,6 @@ export async function main(options: ApplicationConfig = {}) {
 
   const url = app.restServer.url;
   console.log(`Server is running at ${url}`);
-  console.log(`Try ${url}/ping`);
 
   return app;
 }
