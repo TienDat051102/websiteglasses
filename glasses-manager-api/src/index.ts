@@ -19,14 +19,18 @@ if (require.main === module) {
   const config = {
     rest: {
       port: +(process.env.PORT ?? 3005),
-      host: 'localhost',
+
+      host: process.env.HOST || '0.0.0.0',
+
       basePath: process.env.API_PATH,
-      gracePeriodForClose: 5000, // 5 seconds
+
+      gracePeriodForClose: 5000,
       openApiSpec: {
         setServersFromRequest: true,
       },
     },
   };
+
   main(config).catch(err => {
     console.error('Cannot start the application.', err);
     process.exit(1);
