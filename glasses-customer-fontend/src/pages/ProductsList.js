@@ -88,9 +88,7 @@ const AllProductsPage = () => {
       <h2 className="shop-title">Tất cả sản phẩm</h2>
 
       <div className="shop-layout">
-        {/* SIDEBAR */}
         <aside className="shop-sidebar">
-          {/* 🔥 SEARCH ENTER */}
           <div className="filter-box">
             <h5>Tìm kiếm</h5>
             <input

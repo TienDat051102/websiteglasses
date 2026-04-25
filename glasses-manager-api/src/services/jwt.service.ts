@@ -1,4 +1,4 @@
-import {injectable,inject} from '@loopback/core';
+import {inject, injectable} from '@loopback/core';
 import jwt, {JwtPayload} from 'jsonwebtoken';
 import {keys, TokenServiceBindings} from '../keys'; // Import keys
 
@@ -12,25 +12,29 @@ export class JWTService {
     if (!userProfile) {
       throw new Error('Error generating token');
     }
-    console.log('userProfile',userProfile)
+
     const token = await this.signAsync(userProfile, this.jwtSecret, {
       expiresIn: this.jwtExpiresIn,
-      algorithm: 'HS256', 
+      algorithm: 'HS256',
     });
     return token;
   }
 
   verifyToken(token: string): JwtPayload | null {
     try {
-      const decoded = jwt.verify(token, this.jwtSecret) as JwtPayload; 
+      const decoded = jwt.verify(token, this.jwtSecret) as JwtPayload;
       return decoded;
     } catch (error) {
       console.error('Token verification error:', error); // Log lỗi
-      return null; 
+      return null;
     }
   }
 
-  private signAsync(payload: object, secret: string, options: jwt.SignOptions): Promise<string> {
+  private signAsync(
+    payload: object,
+    secret: string,
+    options: jwt.SignOptions,
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       jwt.sign(payload, secret, options, (err, token) => {
         if (err) {

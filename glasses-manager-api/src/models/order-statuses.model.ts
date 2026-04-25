@@ -11,24 +11,41 @@ export class OrderStatuses extends Entity {
 
   @property({
     type: 'number',
+    required: true,
   })
-  orderId?: number;
+  orderId: number;
 
   @property({
     type: 'string',
     jsonSchema: {
-      enum: ['pending', 'preparing', 'delivered', 'complete', 'cancel'],
+      enum: [
+        'pending',
+        'confirmed',
+        'shipping',
+        'delivered',
+        'completed',
+        'cancelled',
+      ],
     },
     required: true,
-    default: 'pending',
   })
   status: string;
+
+  @property({
+    type: 'string',
+  })
+  actor?: string; // system | admin | shipper
+
+  @property({
+    type: 'string',
+  })
+  note?: string;
 
   @property({
     type: 'date',
     default: () => new Date(),
   })
-  updated_at?: string;
+  created_at?: string;
 
   constructor(data?: Partial<OrderStatuses>) {
     super(data);

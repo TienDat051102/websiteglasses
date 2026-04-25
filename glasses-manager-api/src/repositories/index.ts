@@ -1,6 +1,7 @@
 export * from './appointments.repository';
 export * from './customers.repository';
 export * from './discounts.repository';
+export * from './eye-exams.repository';
 export * from './information.repository';
 export * from './menu-categories.repository';
 export * from './menu-items.repository';
@@ -12,4 +13,3 @@ export * from './orders.repository';
 export * from './payments.repository';
 export * from './productInventory.repository';
 export * from './users.repository';
-

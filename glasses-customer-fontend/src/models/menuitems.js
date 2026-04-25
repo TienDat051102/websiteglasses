@@ -1,4 +1,4 @@
-import Api from "./Axios";
+import Api from "./axios";
 
 class MenuItems {
   static async getmenuitemsfeatured() {

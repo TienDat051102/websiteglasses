@@ -11,16 +11,27 @@ export class OrderItems extends Entity {
 
   @property({
     type: 'number',
+    required: true,
   })
-  orderId?: number;
+  orderId: number;
 
   @property({
-    type: 'object',
-    postgresql: {
-      dataType: 'jsonb',
-    },
+    type: 'number',
+    required: true,
   })
-  menu_items: object;
+  productId: number;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  price: number; // giá tại thời điểm mua
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  quantity: number;
 
   @property({
     type: 'date',
@@ -33,6 +44,6 @@ export class OrderItems extends Entity {
   }
 }
 
-export interface OrderitemsRelations { }
+export interface OrderitemsRelations {}
 
 export type OrderItemsWithRelations = OrderItems & OrderitemsRelations;

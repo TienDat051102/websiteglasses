@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useInformation } from "../context/InformationContext";
 import { useCart } from "../context/CartContext";
 import Nav from "./Nav";
+import { useNavigate } from "react-router-dom";
 import Offcanvas from "bootstrap/js/dist/offcanvas";
+import { useAuth } from "../context/AuthContext";
 import {
   Minus,
   Plus,
@@ -14,9 +16,14 @@ import {
   Phone,
   MapPin,
 } from "lucide-react";
+import LoginModal from "./AuthPage";
 
 const Header = () => {
   const { info, loading, error } = useInformation();
+  const [openLogin, setOpenLogin] = useState(false);
+  const { customer, isLoggedIn } = useAuth();
+
+  const navigate = useNavigate();
 
   const { cart, totalItems, totalPrice, updateQuantity, removeItem } =
     useCart();
@@ -38,6 +45,20 @@ const Header = () => {
     offcanvas.show();
   };
 
+  const goCheckout = () => {
+    const el = document.getElementById("offcanvasCart");
+    if (el) Offcanvas.getOrCreateInstance(el).hide();
+
+    if (!isLoggedIn) {
+      navigate("/buyer/login", {
+        state: { redirect: "/checkout" },
+      });
+      return;
+    }
+
+    navigate("/checkout");
+  };
+
   if (loading) return null;
   if (error) return <div>Error</div>;
 
@@ -53,7 +74,6 @@ const Header = () => {
           className="offcanvas-body p-0 d-flex flex-column"
           style={{ height: "100%" }}
         >
-          {/* LIST */}
           <div style={{ flex: 1, overflowY: "auto", padding: 15 }}>
             {cart.length === 0 ? (
               <p className="text-muted text-center mt-5">Giỏ hàng trống</p>
@@ -178,6 +198,7 @@ const Header = () => {
               </div>
 
               <button
+                onClick={goCheckout}
                 className="w-100"
                 style={{
                   background: "#ee4d2d",
@@ -205,10 +226,8 @@ const Header = () => {
           }}
         >
           <div className="container-fluid d-flex justify-content-between align-items-center">
-            {/* LEFT */}
             <div style={{ fontWeight: 500 }}>🔥 Sale sốc mỗi ngày</div>
 
-            {/* RIGHT */}
             <div className="d-flex align-items-center gap-3">
               <div className="d-flex align-items-center gap-1">
                 <Phone size={14} />
@@ -273,10 +292,14 @@ const Header = () => {
               </div>
 
               <div className="col-6 col-lg-4 d-flex justify-content-end align-items-center gap-3">
-                <button className="btn btn-light rounded-circle p-2">
+                <button
+                  onClick={() =>
+                    isLoggedIn ? navigate("/profile") : navigate("/buyer/login")
+                  }
+                  className="btn btn-light rounded-circle"
+                >
                   <User size={18} />
                 </button>
-
                 <button
                   className="btn btn-light rounded-circle p-2 d-lg-none"
                   onClick={openSearch}

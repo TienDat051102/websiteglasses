@@ -1,4 +1,7 @@
-import {AuthenticationComponent} from '@loopback/authentication';
+import {
+  AuthenticationComponent,
+  registerAuthenticationStrategy,
+} from '@loopback/authentication';
 import {JWTAuthenticationComponent} from '@loopback/authentication-jwt';
 import {AuthorizationComponent} from '@loopback/authorization';
 import {BootMixin} from '@loopback/boot';
@@ -12,12 +15,21 @@ import {
 import {ServiceMixin} from '@loopback/service-proxy';
 import * as dotenv from 'dotenv';
 import path from 'path';
+
 import {EmailController} from './controllers';
 import {TokenServiceBindings} from './keys';
 import {MySequence} from './sequence';
+
+// services
+import {CustomerJWTService} from './services';
 import {EmailService} from './services/email.service';
 import {JWTService} from './services/jwt.service';
+
+// strategies
+import './strategies/customer-jwt.strategy';
+import {CustomerJWTStrategy} from './strategies/customer-jwt.strategy';
 import {JWTStrategy} from './strategies/jwt.strategy';
+
 dotenv.config();
 
 export interface PackageInfo {
@@ -25,6 +37,7 @@ export interface PackageInfo {
   version: string;
   description: string;
 }
+
 export const PackageKey = BindingKey.create<PackageInfo>('application.package');
 const pkg: PackageInfo = require('../package.json');
 
@@ -35,17 +48,29 @@ export class Application extends BootMixin(
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
-    this.controller(EmailController);
-    // Cấu hình tiền tố cho tất cả các routes
+
+    // ================= COMPONENT =================
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
     this.component(AuthorizationComponent);
-    this.bind('services.EmailService').toClass(EmailService);
-    this.sequence(MySequence);
-    this.static('/uploads', path.join(__dirname, '../public/uploads'));
 
-    // thiết lập trang chính
+    // ================= CONTROLLER =================
+    this.controller(EmailController);
+
+    // ================= SERVICES =================
+    this.bind('services.EmailService').toClass(EmailService);
+    this.bind('services.JWTService').toClass(JWTService); // admin
+    this.bind('services.CustomerJWTService').toClass(CustomerJWTService); // customer
+
+    // ================= STRATEGY (🔥 QUAN TRỌNG NHẤT) =================
+    registerAuthenticationStrategy(this, JWTStrategy);
+
+    registerAuthenticationStrategy(this, CustomerJWTStrategy);
+    this.sequence(MySequence);
+
+    this.static('/uploads', path.join(__dirname, '../public/uploads'));
     this.static('/', path.join(__dirname, '../public'));
+
     this.configure(RestExplorerBindings.COMPONENT).to({
       path: '/explorer',
     });
@@ -58,18 +83,17 @@ export class Application extends BootMixin(
         extensions: ['.controller.js'],
         nested: true,
       },
+      strategies: {
+        dirs: ['strategies'],
+        extensions: ['.strategy.js'],
+        nested: true,
+      },
     };
-    // Đăng ký dịch vụ JWT
-    this.bind('services.JWTService').toClass(JWTService);
-
-    // Đăng ký chiến lược JWT
-    this.bind('authentication.strategies.jwt').toClass(JWTStrategy);
   }
 
   setUpBindings(): void {
-    // Bind package.json to the application context
     this.bind(PackageKey).to(pkg);
-    //
+
     this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(
       process.env.JWT_EXPIRY_TIME || '21600',
     );

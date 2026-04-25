@@ -5,7 +5,6 @@ const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem("cart");
     return saved ? JSON.parse(saved) : [];
@@ -24,12 +23,17 @@ export const CartProvider = ({ children }) => {
         return prev.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + qty }
-            : item
+            : item,
         );
       }
 
       return [...prev, { ...product, quantity: qty }];
     });
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    localStorage.removeItem("cart");
   };
 
   const updateQuantity = (id, type) => {
@@ -42,7 +46,7 @@ export const CartProvider = ({ children }) => {
           return { ...item, quantity: item.quantity - 1 };
 
         return item;
-      })
+      }),
     );
   };
 
@@ -52,13 +56,10 @@ export const CartProvider = ({ children }) => {
 
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
-  const totalItems = cart.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  );
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -67,6 +68,7 @@ export const CartProvider = ({ children }) => {
         addToCart,
         updateQuantity,
         removeItem,
+        clearCart,
         totalPrice,
         totalItems,
       }}

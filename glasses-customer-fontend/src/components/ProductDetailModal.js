@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { FaShoppingCart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function ProductDetailModal({ show, handleClose, item, addToCart }) {
+  const navigate = useNavigate();
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
 
@@ -172,6 +174,16 @@ function ProductDetailModal({ show, handleClose, item, addToCart }) {
                 </button>
 
                 <button
+                  onClick={() => {
+                    navigate("/checkout", {
+                      state: {
+                        buyNowItem: {
+                          ...item,
+                          quantity: qty,
+                        },
+                      },
+                    });
+                  }}
                   style={{
                     flex: 1,
                     background: "#ee4d2d",

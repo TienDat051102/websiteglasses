@@ -1011,3 +1011,22 @@ h1,h2,h3,h4,h5,h6 {
   font-size: 13px;
   color: #777;
 }
+
+.pay-item {
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pay-item:hover {
+  border-color: #ee4d2d;
+}
+
+.pay-item.active {
+  border: 2px solid #ee4d2d;
+  background: #fff6f3;
+}
+

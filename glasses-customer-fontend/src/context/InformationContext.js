@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import Information from "../models/Information";
+import Information from "../models/information";
 
 const InformationContext = createContext();
 

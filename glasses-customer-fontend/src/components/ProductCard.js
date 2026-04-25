@@ -33,6 +33,7 @@ function ProductCard({ item, navigate }) {
     for (let i = 0; i < qty; i++) {
       addToCart(item);
     }
+    alert(`Đã thêm ${qty} sản phẩm vào giỏ hàng!`);
   };
   const [showModal, setShowModal] = useState(false);
 

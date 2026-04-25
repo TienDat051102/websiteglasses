@@ -241,7 +241,7 @@ export class DiscountsController {
             await Promise.all(
               customers.map(async customer => {
                 await this.emailService.sendEmail(
-                  customer.email,
+                  customer.email || '',
                   emailSubject,
                   emailBody,
                 );

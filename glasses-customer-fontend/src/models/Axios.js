@@ -11,47 +11,46 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Thêm token nếu có
-    const token = localStorage.getItem("token"); // Hoặc cách khác để lấy token
+    const token = localStorage.getItem("customer_token");
+
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    console.error("API Error:", error);
+// axiosInstance.interceptors.response.use(
+//   (response) => {
+//     return response;
+//   },
+//   (error) => {
+//     console.error("API Error:", error);
 
-    if (!error.response) {
-      window.location.href = "/404";
-      return Promise.reject(error);
-    }
+//     // if (!error.response) {
+//     //   window.location.href = "/404";
+//     //   return Promise.reject(error);
+//     // }
 
-    const status = error.response.status;
+//     // const status = error.response.status;
 
-    if (status >= 500) {
-      window.location.href = "/404";
-    }
+//     // if (status >= 500) {
+//     //   window.location.href = "/404";
+//     // }
 
-    if (status === 404) {
-      window.location.href = "/404";
-    }
-    if (status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/login"; // nếu có login
-    }
+//     // if (status === 404) {
+//     //   window.location.href = "/404";
+//     // }
+//     // if (status === 401) {
+//     //   localStorage.removeItem("token");
+//     //   window.location.href = "/login"; // nếu có login
+//     // }
 
-    return Promise.reject(error);
-  },
-);
+//     return Promise.reject(error);
+//   },
+// );
 
 const Api = {
   get: (url, params) => axiosInstance.get(url, { params }),

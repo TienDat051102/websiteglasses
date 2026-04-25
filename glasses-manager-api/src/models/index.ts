@@ -1,6 +1,7 @@
 export * from './appointments.model';
 export * from './customers.model';
 export * from './discounts.model';
+export * from './eye-exams.model';
 export * from './information.model';
 export * from './menu-categories.model';
 export * from './menu-items-details.model';

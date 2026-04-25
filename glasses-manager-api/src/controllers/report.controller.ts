@@ -83,27 +83,19 @@ export class ReportController {
     },
   })
   async revenuebycategory(): Promise<any> {
-    const data = await this.orderRepo.dataSource.execute(`SELECT
-    mc.name AS category_name,
-    SUM((item->>'quantity')::int * (mi.price)::numeric) AS total_revenue
-FROM
-    orders o
-INNER JOIN
-    orderitems oi ON o.id = oi.orderid
-INNER JOIN
-    orderstatuses os ON o.id = os.orderid
-CROSS JOIN LATERAL
-    jsonb_array_elements(oi.menu_items::jsonb) AS item
-INNER JOIN
-    menuitems mi ON (item->>'id')::int = mi.id
-INNER JOIN
-    menucategories mc ON mi.category_id = mc.id
-WHERE
-    os.status = 'complete'
-GROUP BY
-    mc.name
-ORDER BY
-    total_revenue DESC;`);
+    const data = await this.orderRepo.dataSource.execute(`
+SELECT
+  c.name AS category_name,
+  SUM(oi.price * oi.quantity) AS total_revenue
+FROM orders o
+JOIN orderitems oi ON o.id = oi.orderid
+JOIN products p ON p.id = oi.productid
+JOIN categories c ON c.id = p.categoryid
+JOIN orderstatuses os ON os.orderid = o.id
+WHERE os.status = 'completed'
+GROUP BY c.name
+ORDER BY total_revenue DESC;
+`);
     return {data: data};
   }
 
@@ -315,42 +307,42 @@ LIMIT 5;`);
     return {data: data};
   }
 
-  @get('/report/bestsellingproducts')
-  @authenticate('jwt')
-  @response(200, {
-    description: 'Protected resource',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'string',
-        },
-      },
-    },
-  })
-  async bestsellingproducts(): Promise<any> {
-    const data = await this.orderRepo.dataSource.execute(`SELECT
-    mi.name AS product_name,
-	mi.price AS product_price,
-    SUM((item->>'quantity')::int) AS total_quantity,
-    SUM((item->>'quantity')::int * (mi.price)::numeric) AS total_revenue
-FROM
-    orders o
-INNER JOIN
-    orderitems oi ON o.id = oi.orderid
-INNER JOIN
-    orderstatuses os ON o.id = os.orderid
-CROSS JOIN LATERAL
-    jsonb_array_elements(oi.menu_items::jsonb) AS item
-INNER JOIN
-    menuitems mi ON (item->>'id')::int = mi.id
-WHERE
-    os.status = 'complete'
-GROUP BY
-    mi.name,
-	mi.price
-ORDER BY
-    total_revenue DESC
-LIMIT 5;`);
-    return {data: data};
-  }
+  //   @get('/report/bestsellingproducts')
+  //   @authenticate('jwt')
+  //   @response(200, {
+  //     description: 'Protected resource',
+  //     content: {
+  //       'application/json': {
+  //         schema: {
+  //           type: 'string',
+  //         },
+  //       },
+  //     },
+  //   })
+  //   async bestsellingproducts(): Promise<any> {
+  //     const data = await this.orderRepo.dataSource.execute(`SELECT
+  //     mi.name AS product_name,
+  // 	mi.price AS product_price,
+  //     SUM((item->>'quantity')::int) AS total_quantity,
+  //     SUM((item->>'quantity')::int * (mi.price)::numeric) AS total_revenue
+  // FROM
+  //     orders o
+  // INNER JOIN
+  //     orderitems oi ON o.id = oi.orderid
+  // INNER JOIN
+  //     orderstatuses os ON o.id = os.orderid
+  // CROSS JOIN LATERAL
+  //     jsonb_array_elements(oi.menu_items::jsonb) AS item
+  // INNER JOIN
+  //     menuitems mi ON (item->>'id')::int = mi.id
+  // WHERE
+  //     os.status = 'complete'
+  // GROUP BY
+  //     mi.name,
+  // 	mi.price
+  // ORDER BY
+  //     total_revenue DESC
+  // LIMIT 5;`);
+  //     return {data: data};
+  //   }
 }

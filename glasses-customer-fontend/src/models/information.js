@@ -1,13 +1,13 @@
-import Api from './Axios';
+import Api from "./axios";
 
 class Information {
   static async getinformation() {
     try {
-      const URL = '/information';
+      const URL = "/information";
       const { data } = await Api.get(URL);
       return data.data;
     } catch (e) {
-      console.error('Lỗi khi lấy thông tin:', e);
+      console.error("Lỗi khi lấy thông tin:", e);
       throw e;
     }
   }

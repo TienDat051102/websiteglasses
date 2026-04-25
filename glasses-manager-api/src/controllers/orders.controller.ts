@@ -1,12 +1,14 @@
 import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {get, param, post, requestBody} from '@loopback/rest';
+import {get, HttpErrors, param, post, requestBody} from '@loopback/rest';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {
   MenuItemsRepository,
   OrderitemsRepository,
   OrdersRepository,
   OrderstatusesRepository,
+  PaymentsRepository,
 } from '../repositories';
 import {JWTService} from '../services/jwt.service';
 
@@ -18,77 +20,14 @@ export class OrdersController {
     private orderItemRepo: OrderitemsRepository,
     @repository(OrderstatusesRepository)
     private orderStatusRepo: OrderstatusesRepository,
+    @repository(PaymentsRepository)
+    private paymentsRepo: PaymentsRepository,
     @repository(MenuItemsRepository)
     private menuItemsRepo: MenuItemsRepository,
-  ) { }
-
-  @post('/order/createorders')
-  @authenticate('jwt')
-  async createorders(@requestBody() body: any = {}): Promise<any> {
-    const {ordersItem, customerId} = body;
-
-    if (!ordersItem || !Array.isArray(ordersItem)) {
-      return {error: 'Danh sách sản phẩm không hợp lệ'};
-    }
-
-    try {
-      const order = await this.orderRepo.create({
-        customerId: customerId,
-      });
-
-      for (const item of ordersItem) {
-        const product = await this.menuItemsRepo.findById(item.id);
-
-        if (!product) {
-          throw new Error(`Không tìm thấy sản phẩm ID ${item.id}`);
-        }
-
-        if (product.stock < item.quantity) {
-          throw new Error(`Sản phẩm ${product.name} không đủ hàng`);
-        }
-
-        product.stock -= item.quantity;
-        await this.menuItemsRepo.updateById(product.id, product);
-      }
-
-      await this.orderItemRepo.create({
-        orderId: order.id,
-        menu_items: ordersItem,
-      });
-
-      await this.orderStatusRepo.create({
-        orderId: order.id,
-        status: 'pending',
-      });
-
-      return {message: 'Đặt hàng thành công'};
-    } catch (e: any) {
-      return {error: e.message};
-    }
-  }
-
-  @post('/order/updateorders')
-  @authenticate('jwt')
-  async updateorders(@requestBody() body: any = {}): Promise<any> {
-    const {ordersItem, orderId} = body;
-
-    if (!ordersItem || !orderId) {
-      return {error: 'Thiếu dữ liệu'};
-    }
-
-    try {
-      await this.orderItemRepo.create({
-        orderId: orderId,
-        menu_items: ordersItem,
-      });
-
-      return {message: 'Cập nhật thành công'};
-    } catch (e: any) {
-      return {error: e.message};
-    }
-  }
+  ) {}
 
   @get('/order/listorders')
+  @authenticate('jwt')
   async listorders(): Promise<any> {
     try {
       const filter: any = {
@@ -114,6 +53,7 @@ export class OrdersController {
   }
 
   @get('/order/gettorderId/{id}')
+  @authenticate('jwt')
   async gettorderId(@param.path.number('id') id: number): Promise<any> {
     try {
       const data = await this.orderRepo.findById(id, {
@@ -153,5 +93,125 @@ export class OrdersController {
     } catch (e: any) {
       return {error: e.message};
     }
+  }
+
+  @get('/me/orders')
+  @authenticate('customer-jwt')
+  async myOrders(
+    @inject(SecurityBindings.USER) currentUser: UserProfile,
+  ): Promise<any> {
+    if (!currentUser?.id) {
+      throw new HttpErrors.Unauthorized('Invalid user');
+    }
+
+    const orders = await this.orderRepo.find({
+      where: {
+        customerId: currentUser.id,
+      },
+      include: [
+        {
+          relation: 'orderItems',
+        },
+        {
+          relation: 'orderStatuses',
+        },
+      ],
+      order: ['created_at DESC'],
+    });
+
+    return {
+      data: orders,
+    };
+  }
+
+  @post('/me/orders')
+  @authenticate('customer-jwt')
+  async createFromCustomer(
+    @inject(SecurityBindings.USER) currentUser: UserProfile,
+    @requestBody({
+      description: 'Order payload',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    productId: {type: 'number'},
+                    price: {type: 'number'},
+                    quantity: {type: 'number'},
+                  },
+                  required: ['productId', 'price', 'quantity'],
+                },
+              },
+              shipping_address: {type: 'object'},
+              phone: {type: 'string'},
+              note: {type: 'string'},
+              payment_method: {type: 'string'},
+            },
+            required: ['items'],
+          },
+        },
+      },
+    })
+    body: any,
+  ): Promise<any> {
+    if (!currentUser?.id) {
+      throw new HttpErrors.Unauthorized('Invalid user');
+    }
+
+    const {items, shipping_address, phone, note, payment_method} = body;
+    console.log('body', body);
+    if (!items || items.length === 0) {
+      throw new HttpErrors.BadRequest('Cart is empty');
+    }
+
+    const totalPrice = items.reduce(
+      (sum: number, i: any) => sum + i.price * i.quantity,
+      0,
+    );
+
+    const orderCode = 'OD' + Date.now();
+
+    const order = await this.orderRepo.create({
+      customerId: currentUser.id,
+      totalPrice,
+      status: 'pending',
+      payment_status: 'unpaid',
+      payment_method: payment_method || 'cod',
+      shipping_address,
+      phone,
+      note,
+      order_code: orderCode,
+    });
+
+    for (const item of items) {
+      await this.orderItemRepo.create({
+        orderId: order.id,
+        productId: item.productId,
+        price: item.price,
+        quantity: item.quantity,
+      });
+    }
+    await this.orderStatusRepo.create({
+      orderId: order.id,
+      status: 'pending',
+    });
+    //   const payload = {
+    //     orderId: order.id,
+    //     amount: totalPrice,
+    //     payment_method: 'online',
+    //     status: 'pending',
+    //     transaction_id: transaction_id,
+    //   };
+    // await this.paymentsRepo.create(payload);
+
+    return {
+      message: 'Order created successfully',
+      data: order,
+    };
   }
 }

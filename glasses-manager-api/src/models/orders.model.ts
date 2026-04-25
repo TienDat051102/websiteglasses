@@ -5,9 +5,7 @@ import {
   model,
   property,
 } from '@loopback/repository';
-import {Customers} from './customers.model';
-import {OrderItems} from './order-items.model';
-import {OrderStatuses} from './order-statuses.model';
+import {Customers, OrderItems, OrderStatuses} from './index';
 
 @model()
 export class Orders extends Entity {
@@ -23,11 +21,8 @@ export class Orders extends Entity {
 
   @property({
     type: 'number',
-    postgresql: {
-      dataType: 'decimal',
-    },
   })
-  total_price?: number;
+  totalPrice?: number;
 
   @property({
     type: 'string',
@@ -40,8 +35,28 @@ export class Orders extends Entity {
 
   @property({
     type: 'string',
+    jsonSchema: {
+      enum: ['unpaid', 'paid', 'failed'],
+    },
+    default: 'unpaid',
   })
-  shipping_address?: string;
+  payment_status?: string;
+
+  @property({
+    type: 'string',
+    jsonSchema: {
+      enum: ['cod', 'vnpay', 'momo'],
+    },
+  })
+  payment_method?: string;
+
+  @property({
+    type: 'object',
+    postgresql: {
+      dataType: 'jsonb',
+    },
+  })
+  shipping_address?: object;
 
   @property({
     type: 'string',
@@ -54,22 +69,32 @@ export class Orders extends Entity {
   note?: string;
 
   @property({
+    type: 'string',
+  })
+  order_code?: string;
+
+  @property({
     type: 'date',
     default: () => new Date(),
   })
   created_at?: string;
 
-  @hasMany(() => OrderStatuses, {keyTo: 'orderId'})
-  orderStatuses: OrderStatuses[];
+  @property({
+    type: 'date',
+  })
+  updated_at?: string;
 
   @hasMany(() => OrderItems, {keyTo: 'orderId'})
   orderItems: OrderItems[];
+
+  @hasMany(() => OrderStatuses, {keyTo: 'orderId'})
+  orderStatuses: OrderStatuses[];
 
   constructor(data?: Partial<Orders>) {
     super(data);
   }
 }
 
-export interface OrdersRelations { }
+export interface OrdersRelations {}
 
 export type OrdersWithRelations = Orders & OrdersRelations;

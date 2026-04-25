@@ -17,37 +17,53 @@ export class Payments extends Entity {
     type: 'number',
     required: true,
   })
-  amount: number; // Số tiền thanh toán
+  amount: number;
 
   @property({
     type: 'string',
     jsonSchema: {
-      enum: ['cash', 'online'],
+      enum: ['cod', 'vnpay', 'momo'],
     },
     required: true,
   })
-  payment_method: string; // Phương thức thanh toán (e.g., cash, card, online)
+  payment_method: string;
 
   @property({
     type: 'string',
   })
-  transaction_id?: string; // Mã giao dịch (nếu thanh toán online)
+  transaction_id?: string;
 
   @property({
     type: 'string',
     jsonSchema: {
-      enum: ['pending', 'completed', 'failed'], // Các giá trị có thể chấp nhận
+      enum: ['pending', 'success', 'failed', 'cancel'],
     },
-    required: true,
     default: 'pending',
   })
-  status: string; // Trạng thái thanh toán
+  status: string;
+
+  @property({
+    type: 'string',
+  })
+  payment_url?: string;
+
+  @property({
+    type: 'object',
+    postgresql: {
+      dataType: 'jsonb',
+    },
+  })
+  response_data?: object;
+
+  @property({
+    type: 'string',
+  })
+  provider_code?: string;
 
   @property({
     type: 'date',
-    default: () => new Date(),
   })
-  payment_date?: string; // Ngày thanh toán
+  paid_at?: string;
 
   constructor(data?: Partial<Payments>) {
     super(data);

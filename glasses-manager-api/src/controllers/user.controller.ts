@@ -27,9 +27,10 @@ export class UserController {
           const payload = {
             id: data.id,
             username: data.username,
+            type: 'admin',
           };
           const token = await this.jwtService.generateToken(payload);
-          console.log('token', token);
+
           await this.userrepo.updateById(data.id, {token: token});
           return {message: 'Đăng nhập thành công', token: token, data: data};
         } else {

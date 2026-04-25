@@ -16,7 +16,6 @@ export async function main(options: ApplicationConfig = {}) {
 }
 
 if (require.main === module) {
-  // Run the application
   const config = {
     rest: {
       port: +(process.env.PORT ?? 3005),
@@ -24,7 +23,6 @@ if (require.main === module) {
       basePath: process.env.API_PATH,
       gracePeriodForClose: 5000, // 5 seconds
       openApiSpec: {
-        // useful when used with OpenAPI-to-GraphQL to locate your application
         setServersFromRequest: true,
       },
     },
