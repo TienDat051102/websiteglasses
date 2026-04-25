@@ -20,12 +20,10 @@ import {EmailController} from './controllers';
 import {TokenServiceBindings} from './keys';
 import {MySequence} from './sequence';
 
-// services
 import {CustomerJWTService} from './services';
 import {EmailService} from './services/email.service';
 import {JWTService} from './services/jwt.service';
 
-// strategies
 import './strategies/customer-jwt.strategy';
 import {CustomerJWTStrategy} from './strategies/customer-jwt.strategy';
 import {JWTStrategy} from './strategies/jwt.strategy';
@@ -49,6 +47,12 @@ export class Application extends BootMixin(
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
+    // 🔥 CONFIG PORT + HOST (QUAN TRỌNG)
+    this.configure('rest').to({
+      port: Number(process.env.PORT) || 10000,
+      host: process.env.HOST || '0.0.0.0',
+    });
+
     // ================= COMPONENT =================
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
@@ -59,24 +63,29 @@ export class Application extends BootMixin(
 
     // ================= SERVICES =================
     this.bind('services.EmailService').toClass(EmailService);
-    this.bind('services.JWTService').toClass(JWTService); // admin
-    this.bind('services.CustomerJWTService').toClass(CustomerJWTService); // customer
+    this.bind('services.JWTService').toClass(JWTService);
+    this.bind('services.CustomerJWTService').toClass(CustomerJWTService);
 
-    // ================= STRATEGY (🔥 QUAN TRỌNG NHẤT) =================
+    // ================= STRATEGY =================
     registerAuthenticationStrategy(this, JWTStrategy);
-
     registerAuthenticationStrategy(this, CustomerJWTStrategy);
+
     this.sequence(MySequence);
 
-    this.static('/uploads', path.join(__dirname, '../public/uploads'));
-    this.static('/', path.join(__dirname, '../public'));
+    // 🔥 FIX STATIC PATH
+    const publicPath = path.resolve(__dirname, '../public');
 
+    this.static('/uploads', path.join(publicPath, 'uploads'));
+    this.static('/', publicPath);
+
+    // ================= EXPLORER =================
     this.configure(RestExplorerBindings.COMPONENT).to({
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
 
     this.projectRoot = __dirname;
+
     this.bootOptions = {
       controllers: {
         dirs: ['controllers'],

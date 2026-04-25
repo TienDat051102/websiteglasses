@@ -20,11 +20,10 @@ if (require.main === module) {
     rest: {
       port: +(process.env.PORT ?? 3005),
 
-      host: process.env.HOST || '0.0.0.0',
-
-      basePath: process.env.API_PATH,
+      host: process.env.HOST ?? '0.0.0.0',
 
       gracePeriodForClose: 5000,
+
       openApiSpec: {
         setServersFromRequest: true,
       },
