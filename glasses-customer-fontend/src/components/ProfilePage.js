@@ -1,4 +1,5 @@
-import React, { useState, useNavigate, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { User, ShoppingBag, Eye, LogOut } from "lucide-react";
 import AddressSelector from "./AddressSelector";
 import Customer from "../models/customer";

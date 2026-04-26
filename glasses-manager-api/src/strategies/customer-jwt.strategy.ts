@@ -8,7 +8,7 @@ export class CustomerJWTStrategy implements AuthenticationStrategy {
   name = 'customer-jwt';
 
   constructor(
-    @service(CustomerJWTService) // 🔥 ĐỔI Ở ĐÂY
+    @service(CustomerJWTService)
     private jwtService: CustomerJWTService,
   ) {
     console.log('Customer JWT Strategy Loaded');

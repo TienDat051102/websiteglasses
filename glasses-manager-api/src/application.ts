@@ -46,7 +46,6 @@ export class Application extends BootMixin(
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
-    // 🔥 CONFIG PORT + HOST (QUAN TRỌNG)
     this.configure('rest').to({
       port: Number(process.env.PORT) || 10000,
       host: process.env.HOST || '0.0.0.0',
