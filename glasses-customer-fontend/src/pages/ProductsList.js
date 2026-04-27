@@ -3,7 +3,7 @@ import ProductCard from "../components/ProductCard";
 import MenuItems from "../models/menuitems";
 import MenuCategories from "../models/menucategories";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 15;
 
 const AllProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -12,7 +12,6 @@ const AllProductsPage = () => {
 
   const [loading, setLoading] = useState(true);
 
-  // 🔥 SEARCH FIX
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
 

@@ -1,12 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Events = () => {
+  const navigate = useNavigate();
   return (
     <>
-      {/* 🔥 DISCOUNT / CTA */}
       <section className="py-5">
         <div className="container-fluid">
-
           <div
             className="py-5 my-5 rounded-4"
             style={{
@@ -15,10 +15,10 @@ const Events = () => {
           >
             <div className="container my-5">
               <div className="row align-items-center">
-
                 <div className="col-md-6 p-4">
                   <h2 className="fw-bold">
-                    Nhận <span className="text-danger">Giảm 25%</span> đơn đầu tiên
+                    Nhận <span className="text-danger">Giảm 25%</span> đơn đầu
+                    tiên
                   </h2>
                   <p className="text-muted">
                     Đăng ký để nhận ưu đãi và cập nhật mẫu kính mới nhất.
@@ -27,25 +27,24 @@ const Events = () => {
 
                 <div className="col-md-6 p-4">
                   <form className="bg-white p-4 rounded-4 shadow-sm">
-                    <input className="form-control mb-3" placeholder="Tên của bạn" />
+                    <input
+                      className="form-control mb-3"
+                      placeholder="Tên của bạn"
+                    />
                     <input className="form-control mb-3" placeholder="Email" />
                     <button className="btn btn-danger w-100">
                       Nhận ưu đãi
                     </button>
                   </form>
                 </div>
-
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
-      {/* 🔥 BLOG (UPGRADE IMAGE REAL EYEWEAR) */}
       <section className="py-5">
         <div className="container-fluid">
-
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h3 className="fw-bold">Blog kính mắt</h3>
             <span className="text-primary" style={{ cursor: "pointer" }}>
@@ -54,7 +53,6 @@ const Events = () => {
           </div>
 
           <div className="row g-4">
-
             {[
               {
                 img: "https://bazaarvietnam.vn/wp-content/uploads/2021/02/chon-kinh-can-phu-hop-voi-khuon-mat-nu-2.jpg",
@@ -90,16 +88,13 @@ const Events = () => {
                 </div>
               </div>
             ))}
-
           </div>
-
         </div>
       </section>
 
       {/* 🔥 CTA APP */}
       <section className="py-5">
         <div className="container-fluid">
-
           <div
             className="rounded-4 p-5"
             style={{
@@ -107,7 +102,6 @@ const Events = () => {
             }}
           >
             <div className="row align-items-center">
-
               <div className="col-md-4 text-center">
                 <img
                   src="https://images.unsplash.com/photo-1589571894960-20bbe2828d0a"
@@ -125,21 +119,19 @@ const Events = () => {
                   Trải nghiệm mua sắm nhanh chóng, tiện lợi và hiện đại.
                 </p>
 
-                <button className="btn btn-dark mt-2">
+                <button
+                  onClick={() => navigate("/menuitems")}
+                  className="btn btn-dark mt-2"
+                >
                   Mua ngay
                 </button>
               </div>
-
             </div>
           </div>
-
         </div>
       </section>
-
-      {/* 🔥 KEYWORDS */}
       <section className="py-5">
         <div className="container-fluid">
-
           <h4 className="fw-bold mb-3">Mọi người đang tìm</h4>
 
           {[
@@ -149,11 +141,13 @@ const Events = () => {
             "Kính chống ánh sáng xanh",
             "Lens",
           ].map((item, i) => (
-            <button key={i} className="btn btn-light border me-2 mb-2 rounded-pill">
+            <button
+              key={i}
+              className="btn btn-light border me-2 mb-2 rounded-pill"
+            >
               {item}
             </button>
           ))}
-
         </div>
       </section>
 
@@ -161,7 +155,6 @@ const Events = () => {
       <section className="py-5">
         <div className="container-fluid">
           <div className="row text-center g-4">
-
             {[
               { title: "Giao nhanh", desc: "2-3 ngày toàn quốc" },
               { title: "Thanh toán", desc: "An toàn 100%" },
@@ -175,7 +168,6 @@ const Events = () => {
                 </div>
               </div>
             ))}
-
           </div>
         </div>
       </section>

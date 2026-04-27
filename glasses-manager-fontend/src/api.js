@@ -1,4 +1,3 @@
-// axios.js
 import axios from "axios";
 import { showLoading, hideLoading } from "./loading";
 

@@ -35,7 +35,6 @@ class Header extends Component {
 
   handleCloseForm = () => {
     this.setState({ showChangPassword: false });
-    // this.componentDidMount();
   };
 
   render() {
@@ -52,7 +51,7 @@ class Header extends Component {
           <div className="d-flex align-items-center justify-content-between">
             <a href="index.html" className="logo d-flex align-items-center">
               <img src="assets/img/logo.png" alt="" />
-              <span className="d-none d-lg-block">NiceAdmin</span>
+              <span className="d-none d-lg-block">Quản Trị Cửa Hàng</span>
             </a>
             <i className="bi bi-list toggle-sidebar-btn"></i>
           </div>
@@ -349,12 +348,7 @@ class Header extends Component {
         </header>
 
         <Modal show={showChangPassword} onHide={this.handleCloseForm}>
-         
-  
-            <Changpassword
-              onClose={this.handleCloseForm}
-            />
-   
+          <Changpassword onClose={this.handleCloseForm} />
         </Modal>
       </>
     );

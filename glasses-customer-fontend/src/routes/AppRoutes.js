@@ -7,6 +7,9 @@ import CheckoutPage from "../components/CheckoutPage";
 import LoginModal from "../components/AuthPage";
 import ProfilePage from "../components/ProfilePage";
 import ProtectedRoute from "./ProtectedRoute";
+import AboutPage from "../pages/AboutPage";
+import PolicyPage from "../pages/PolicyPage";
+import ContactPage from "../pages/ContactPage";
 
 const AppRoutes = () => {
   return (
@@ -14,6 +17,9 @@ const AppRoutes = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/menuitems" element={<AllProductsPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/policy" element={<PolicyPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
         <Route
           path="/checkout"

@@ -6,18 +6,17 @@ import StaffLayout from "./layouts/staff/layoutstaff";
 import Dashboard from "./layouts/dashboard"; // Admin Dashboard
 import Discounts from "./pages/table/discounts/discounts"; // Trang giảm giá
 import User from "./pages/table/User/index"; // Trang người dùng
-import ProtectedRoute from "./components/ProtectedRoute"; 
+import ProtectedRoute from "./components/ProtectedRoute";
 import OrderPageStaff from "./layouts/staff/OrderPage";
 import OrderListStaff from "./layouts/staff/OrderList";
 import TableBookingStaff from "./layouts/staff/TableBooking";
-import Register from "./pages/register"
+import Register from "./pages/register";
 import Menucategories from "./pages/table/menucategories";
 import MenuItems from "./pages/table/menuitem";
 import Customer from "./pages/table/customer";
 import { NAVMENU } from "./common/constants";
 import NavMenu from "./pages/table/navMenu";
 import Information from "./pages/table/information";
-
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -54,13 +53,16 @@ function App() {
           path="/"
           element={
             isAuthenticated ? (
-              <Navigate to={`/${userRole === "admin" ? "admin" : "staff/order"}`} replace />
+              <Navigate
+                to={`/${userRole === "admin" ? "admin" : "staff/order"}`}
+                replace
+              />
             ) : (
               <Login onLoginSuccess={handleLoginSuccess} />
             )
           }
         />
-        <Route path="/register" element ={<Register/>}/>
+        <Route path="/register" element={<Register />} />
 
         {/* Routes dành cho Admin */}
         <Route
@@ -74,33 +76,19 @@ function App() {
                     <Route path="/discounts" element={<Discounts />} />
                     <Route path="/user" element={<User />} />
                     <Route path="/menu" element={<MenuItems />} />
-                    <Route path="/menu-categories" element={<Menucategories />} />
+                    <Route
+                      path="/menu-categories"
+                      element={<Menucategories />}
+                    />
                     <Route path="/customer" element={<Customer />} />
                     <Route path="/navmenu" element={<NavMenu />} />
                     <Route path="/information" element={<Information />} />
-                    <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+                    <Route
+                      path="/"
+                      element={<Navigate to="/admin/dashboard" replace />}
+                    />
                   </Routes>
                 </AdminLayout>
-              </ProtectedRoute>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
-
-        {/* Routes dành cho Nhân viên */}
-        <Route
-          path="/staff/*"
-          element={
-            isAuthenticated && userRole === "staff" ? (
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
-                <StaffLayout handleLogout={handleLogout}>
-                  <Routes>
-                    <Route path="order" element={<OrderPageStaff />} />
-                    <Route path="order-list" element={<OrderListStaff />} />
-                    <Route path="table-booking" element={<TableBookingStaff />} />
-                  </Routes>
-                </StaffLayout>
               </ProtectedRoute>
             ) : (
               <Navigate to="/" replace />

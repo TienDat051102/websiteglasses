@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Container = () => {
+  const navigate = useNavigate();
   return (
     <>
       {/* 🔥 HERO BANNER */}
@@ -17,29 +19,25 @@ const Container = () => {
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-12">
-
               <div className="banner-blocks">
-
                 {/* MAIN SLIDER */}
                 <div className="banner-ad large bg-light block-1">
-
                   <div className="swiper main-swiper">
                     <div className="swiper-wrapper">
-
-                      {/* SLIDE 1 */}
                       <div className="swiper-slide">
                         <div className="row banner-content p-5">
                           <div className="content-wrapper col-md-7">
                             <div className="categories my-3">
                               Thời trang 2026
                             </div>
-                            <h3 className="display-4">
-                              Kính Mắt Cao Cấp
-                            </h3>
+                            <h3 className="display-4">Kính Mắt Cao Cấp</h3>
                             <p>
                               Khám phá bộ sưu tập kính mắt thời trang mới nhất.
                             </p>
-                            <a href="#" className="btn btn-dark btn-lg mt-3">
+                            <a
+                              onClick={() => navigate("/menuitems")}
+                              className="btn btn-dark btn-lg mt-3"
+                            >
                               Mua ngay
                             </a>
                           </div>
@@ -61,9 +59,7 @@ const Container = () => {
                             <div className="categories mb-3">
                               Ưu đãi đặc biệt
                             </div>
-                            <h3 className="banner-title">
-                              Giảm giá đến 30%
-                            </h3>
+                            <h3 className="banner-title">Giảm giá đến 30%</h3>
                             <p>
                               Dành cho học sinh - sinh viên, đo mắt miễn phí.
                             </p>
@@ -92,9 +88,7 @@ const Container = () => {
                             <h3 className="banner-title">
                               Rayban - Gucci - Dior
                             </h3>
-                            <p>
-                              Cam kết chính hãng 100%, bảo hành đầy đủ.
-                            </p>
+                            <p>Cam kết chính hãng 100%, bảo hành đầy đủ.</p>
                             <a href="#" className="btn btn-outline-dark">
                               Khám phá
                             </a>
@@ -109,7 +103,6 @@ const Container = () => {
                           </div>
                         </div>
                       </div>
-
                     </div>
 
                     <div className="swiper-pagination"></div>
@@ -131,7 +124,10 @@ const Container = () => {
                     <div className="content-wrapper col-md-7">
                       <div className="categories mb-3">Sale 20%</div>
                       <h3 className="banner-title">Kính Râm Thời Trang</h3>
-                      <a href="#" className="nav-link">
+                      <a
+                        onClick={() => navigate("/menuitems")}
+                        className="nav-link"
+                      >
                         Mua ngay →
                       </a>
                     </div>
@@ -159,9 +155,7 @@ const Container = () => {
                     </div>
                   </div>
                 </div>
-
               </div>
-
             </div>
           </div>
         </div>
@@ -171,7 +165,6 @@ const Container = () => {
       <section className="py-5">
         <div className="container-fluid">
           <div className="row">
-
             {/* LEFT */}
             <div className="col-md-6">
               <div
@@ -188,7 +181,10 @@ const Container = () => {
                   <div className="fs-3 fw-bold">Giảm 25%</div>
                   <h3>Kính Cận Cao Cấp</h3>
                   <p>Thiết kế hiện đại, phù hợp mọi khuôn mặt.</p>
-                  <a href="#" className="btn btn-dark">
+                  <a
+                    onClick={() => navigate("/menuitems")}
+                    className="btn btn-dark"
+                  >
                     Mua ngay
                   </a>
                 </div>
@@ -217,7 +213,6 @@ const Container = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
